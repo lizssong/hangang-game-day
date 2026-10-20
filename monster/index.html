@@ -139,6 +139,30 @@ input[type=text]{width:100%;min-height:56px;border:3px solid var(--ink);border-r
 .collect i svg{width:100%;height:100%}
 .gps-chip{align-self:flex-start;font-size:12px;font-weight:700;background:rgba(255,255,255,.85);border:2px solid var(--ink);border-radius:999px;padding:0 10px}
 .gps-chip.bad{background:var(--gold)}
+.net-chip{display:inline-flex;align-items:center;gap:6px}
+.net-chip .dot{width:10px;height:10px}
+/* 순위판 */
+.board-in{max-width:720px}
+.board-sub{text-align:center;font-family:var(--f-display);font-size:18px;background:rgba(255,255,255,.75);border-radius:999px;padding:2px 16px;align-self:center}
+.rank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.rank li{display:grid;grid-template-columns:40px 56px 1fr auto;align-items:center;gap:12px;background:var(--cream);border:3px solid var(--ink);border-radius:var(--r-lg);box-shadow:0 5px 0 var(--ink);padding:10px 16px}
+.rank li.top{background:#FFF0C2}
+.rank .pos{font-family:var(--f-display);font-size:32px;text-align:center;font-variant-numeric:tabular-nums}
+.rank .ava{width:56px;height:56px;border-radius:50%;border:3px solid var(--ink);overflow:hidden;display:grid;place-items:end center}
+.rank .ava svg{width:64px;height:auto;transform:translateY(10px)}
+.rank .nm{min-width:0;display:flex;flex-direction:column;gap:4px}
+.rank .nm b{font-family:var(--f-display);font-weight:400;font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank .mini{display:flex;gap:2px;flex-wrap:wrap}
+.rank .mini i{width:20px;height:20px;display:block}
+.rank .mini i svg{width:100%;height:100%}
+.rank .pts{font-family:var(--f-display);font-size:36px;line-height:1;text-align:right;font-variant-numeric:tabular-nums}
+.rank .pts small{display:block;font-size:13px;color:var(--muted)}
+.rank .away{opacity:.55}
+.feed{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.feed li{display:flex;align-items:center;gap:10px;font-size:16px}
+.feed li svg{width:36px;height:36px;flex:none}
+.feed time{margin-left:auto;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.first-bonus{font-family:var(--f-display);font-size:18px;background:var(--gold);border:3px solid var(--ink);border-radius:999px;padding:2px 14px;align-self:center}
 
 .hud-bottom{position:absolute;left:0;right:0;bottom:0;padding:0 max(12px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px;pointer-events:none}
 .hud-bottom > *{pointer-events:auto}
@@ -320,6 +344,7 @@ input[type=text]{width:100%;min-height:56px;border:3px solid var(--ink);border-r
       <div class="qr" id="qr"></div>
       <p class="link" id="gameLink"></p>
       <div class="row2"><button class="gbtn small" data-act="copy">링크 복사</button><button class="gbtn small" data-act="share">공유하기</button></div>
+      <button class="gbtn plum" data-act="openBoardHost">실시간 순위판 열기</button>
       <button class="gbtn red" data-act="hostJoin">나도 탐험대로 참여하기</button>
     </div>
     <button class="gbtn small" data-act="toTitle">처음 화면으로</button>
@@ -336,6 +361,7 @@ input[type=text]{width:100%;min-height:56px;border:3px solid var(--ink);border-r
     </div>
     <div class="collect" id="collect"></div>
     <span class="gps-chip" id="gpsChip">위치 찾는 중…</span>
+    <span class="gps-chip net-chip" id="netChip" hidden></span>
   </div>
   <div class="hud-bottom">
     <button class="gbtn red big meet-btn" id="meetBtn" data-act="meet" hidden>몬스터 발견! 다가가기</button>
@@ -380,6 +406,18 @@ input[type=text]{width:100%;min-height:56px;border:3px solid var(--ink);border-r
   <div class="basket" id="basket" hidden><div class="bk" id="bk"></div></div>
   <div class="dlg" id="dlg"><span class="who" id="dlgWho">탐험 일지</span><p id="dlgText"></p><div class="acts" id="dlgActs"></div><span class="caret" id="caret">▼</span></div>
   <div class="flash" id="flash"></div>
+</section>
+
+<!-- ===== 실시간 순위판 ===== -->
+<section class="scr" id="scr-board" hidden>
+  <div class="sky"></div>
+  <div class="page"><div class="page-in board-in">
+    <h2 class="page-title">실시간 순위</h2>
+    <p class="board-sub" id="boardSub">연결 중…</p>
+    <ol class="rank" id="rankList"></ol>
+    <div class="panel"><h3 style="font-size:20px">방금 잡힌 몬스터</h3><ul class="feed" id="feed"></ul></div>
+    <button class="gbtn small" data-act="boardBack">돌아가기</button>
+  </div></div>
 </section>
 
 <div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
@@ -463,6 +501,133 @@ const SFX = {
   step(){ this.tone(140,.05,'triangle',.05); },
 };
 
+/* ---------- 실시간 함께하기 (Firebase Realtime Database · REST 스트리밍) ---------- */
+const BONUS = 5;
+const FB = { url:(window.__FB_URL || 'https://hangang-monster-default-rtdb.asia-southeast1.firebasedatabase.app'), es:null, key:null, tree:{}, ready:false, ok:false, seen:new Set(), skew:0, lastSend:0, lastSendPos:null, sentAt:0, view:{} };
+const SV = { '.sv':'timestamp' };
+const newId = () => 't' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const gameKey = () => S.sim ? 'practice' : String(S.game.seed);
+function netConnect(){
+  if (!S.game || !window.EventSource) return;
+  const key = gameKey();
+  if (FB.es && FB.key === key) return;
+  netClose();
+  FB.key = key; FB.tree = {}; FB.ready = false; FB.seen = new Set(); FB.view = {};
+  try{
+    const es = new EventSource(`${FB.url}/games/${key}.json`);
+    FB.es = es;
+    es.addEventListener('put', e => onStream(e, false));
+    es.addEventListener('patch', e => onStream(e, true));
+    es.addEventListener('cancel', () => { FB.ok = false; renderNet(); });
+    es.onopen = () => { FB.ok = true; renderNet(); };
+    es.onerror = () => { FB.ok = false; renderNet(); };
+  }catch(e){}
+}
+function netClose(){ if (FB.es){ FB.es.close(); FB.es = null; } FB.ok = false; }
+function applyPut(path, data){
+  const segs = path.split('/').filter(Boolean);
+  if (!segs.length){ FB.tree = (data && typeof data === 'object') ? data : {}; return; }
+  if (!FB.tree || typeof FB.tree !== 'object') FB.tree = {};
+  let node = FB.tree;
+  for (let i=0;i<segs.length-1;i++){ if (!node[segs[i]] || typeof node[segs[i]] !== 'object') node[segs[i]] = {}; node = node[segs[i]]; }
+  const last = segs[segs.length-1];
+  if (data === null || data === undefined) delete node[last]; else node[last] = data;
+}
+function onStream(e, patch){
+  let msg; try{ msg = JSON.parse(e.data); }catch(err){ return; }
+  if (!msg || typeof msg.path !== 'string') return;
+  if (patch && msg.data && typeof msg.data === 'object'){ for (const k in msg.data) applyPut(msg.path.replace(/\/$/,'') + '/' + k, msg.data[k]); }
+  else applyPut(msg.path, msg.data);
+  FB.ok = true;
+  if (!FB.ready && msg.path === '/' && !patch){ FB.ready = true; eachCatch((mon,tid) => FB.seen.add(mon+'|'+tid)); syncLocalCatches(); }
+  else if (FB.ready) checkNewCatches();
+  const me = S.team && FB.tree.teams && FB.tree.teams[S.team.id];
+  if (me && typeof me.t === 'number' && FB.sentAt){ FB.skew = me.t - FB.sentAt; FB.sentAt = 0; }
+  updateHUD(); renderNet(); if (S.screen === 'board') renderBoard();
+}
+function eachCatch(fn){ const c = (FB.tree && FB.tree.catches) || {}; for (const mon in c){ const o = c[mon]; if (o && typeof o === 'object') for (const tid in o) fn(mon, tid, +o[tid]); } }
+function firstOf(mon){ const o = FB.tree && FB.tree.catches && FB.tree.catches[mon]; if (!o || typeof o !== 'object') return null; let best = null, bt = Infinity; for (const tid in o){ const v = +o[tid]; if (v < bt){ bt = v; best = tid; } } return best; }
+function checkNewCatches(){
+  eachCatch((mon, tid) => {
+    const k = mon+'|'+tid; if (FB.seen.has(k)) return; FB.seen.add(k);
+    if (S.team && tid === S.team.id) return;
+    const t = FB.tree.teams && FB.tree.teams[tid], m = MONSTERS.find(x => x.id === mon);
+    if (t && m && (S.screen === 'field' || S.screen === 'board')){ toast(`${t.name || '다른 탐험대'}이(가) ${m.name}을(를) 잡았어요!`); SFX.pop(); }
+  });
+}
+function netWrite(method, path, body){
+  if (!S.game) return Promise.resolve();
+  return fetch(`${FB.url}/games/${gameKey()}/${path}.json`, { method, body: body === undefined ? undefined : JSON.stringify(body) }).catch(() => {});
+}
+function netJoin(){
+  if (!S.team || !S.game) return;
+  netConnect();
+  FB.sentAt = Date.now(); FB.lastSend = Date.now();
+  const body = { name:S.team.name, avatar:S.team.avatar, t:SV };
+  if (S.pos){ body.x = +S.pos.x.toFixed(1); body.y = +S.pos.y.toFixed(1); FB.lastSendPos = { x:S.pos.x, y:S.pos.y }; }
+  netWrite('PATCH', 'teams/' + S.team.id, body);
+}
+function netPos(force){
+  if (!S.team || !S.pos || !FB.es) return;
+  const now = Date.now(), lp = FB.lastSendPos;
+  const moved = !lp || Math.hypot(lp.x - S.pos.x, lp.y - S.pos.y) > 2;
+  if (force || (moved && now - FB.lastSend > 2500) || now - FB.lastSend > 15000){
+    FB.lastSend = now; FB.lastSendPos = { x:S.pos.x, y:S.pos.y }; FB.sentAt = now;
+    netWrite('PATCH', 'teams/' + S.team.id, { x:+S.pos.x.toFixed(1), y:+S.pos.y.toFixed(1), t:SV });
+  }
+}
+setInterval(() => { if (S.screen === 'field' || S.screen === 'enc') netPos(); }, 5000);
+function syncLocalCatches(){ if (!S.team) return; for (const id in S.caught){ if (!(FB.tree.catches && FB.tree.catches[id] && FB.tree.catches[id][S.team.id])) netWrite('PUT', `catches/${id}/${S.team.id}`, S.caught[id]); } }
+function netCatch(id){
+  if (!S.team) return;
+  const k = id + '|' + S.team.id; FB.seen.add(k);
+  applyPut(`/catches/${id}/${S.team.id}`, Date.now() + FB.skew);
+  netWrite('PUT', `catches/${id}/${S.team.id}`, SV);
+}
+function netReset(){
+  if (!S.team) return;
+  for (const id in S.caught){ applyPut(`/catches/${id}/${S.team.id}`, null); netWrite('DELETE', `catches/${id}/${S.team.id}`); }
+}
+function othersFresh(){
+  const out = [], tt = (FB.tree && FB.tree.teams) || {}, now = Date.now() + FB.skew;
+  for (const id in tt){
+    if (S.team && id === S.team.id) continue;
+    const t = tt[id]; if (!t || typeof t.x !== 'number') continue;
+    if (typeof t.t === 'number' && now - t.t > 120000) continue;
+    out.push([id, t]);
+  }
+  return out;
+}
+function teamScore(tid){
+  let pts = 0, n = 0, firsts = 0; const got = new Set();
+  eachCatch((mon, id) => { if (id !== tid) return; const m = MONSTERS.find(x => x.id === mon); if (!m) return; pts += m.pts; n++; got.add(mon); if (firstOf(mon) === tid){ pts += BONUS; firsts++; } });
+  return { pts, n, firsts, got };
+}
+function renderNet(){
+  const chip = $('#netChip'); if (!chip) return;
+  if (!FB.es || S.screen !== 'field'){ chip.hidden = !FB.es; }
+  chip.hidden = !FB.es;
+  const n = othersFresh().length + 1;
+  chip.innerHTML = FB.ok ? `<span class="dot" style="background:#2FA65A"></span>${n}팀 함께 탐험 중` : `<span class="dot" style="background:#FFC23D"></span>연결 중…`;
+}
+function renderBoard(){
+  const tt = (FB.tree && FB.tree.teams) || {}, now = Date.now() + FB.skew;
+  const rows = Object.keys(tt).filter(id => tt[id] && tt[id].name).map(id => Object.assign({ id, t:tt[id] }, teamScore(id)));
+  rows.sort((a,b) => b.pts - a.pts || b.n - a.n);
+  $('#boardSub').textContent = FB.ok ? `게임 번호 ${S.sim ? '연습' : S.game.seed} · ${rows.length}팀 참여 중` : '연결 중…';
+  $('#rankList').innerHTML = rows.length ? rows.map((r,i) => {
+    const av = avatarOf(r.t.avatar), away = typeof r.t.t === 'number' && now - r.t.t > 120000;
+    return `<li class="${i === 0 && r.pts > 0 ? 'top' : ''} ${away ? 'away' : ''}"><span class="pos">${i+1}</span><span class="ava" style="background:${av.color}">${avatarSVG(av.id, av.color)}</span>
+      <span class="nm"><b>${esc(r.t.name)}</b><span class="mini">${MONSTERS.map(m => `<i>${r.got.has(m.id) ? monsterSVG(m) : monsterSVG(m,{silhouette:true})}</i>`).join('')}</span></span>
+      <span class="pts">${r.pts}<small>${r.n}마리${r.firsts ? ` · 첫 발견 ${r.firsts}` : ''}</small></span></li>`;
+  }).join('') : '<li style="display:block;text-align:center;font-family:var(--f-display);font-size:18px">아직 탐험대가 없어요. 팀이 링크로 들어오면 여기에 나타나요.</li>';
+  const ev = []; eachCatch((mon, tid, ts) => ev.push({ mon, tid, ts })); ev.sort((a,b) => b.ts - a.ts);
+  const hh = ts => { const d = new Date(ts - FB.skew); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); };
+  $('#feed').innerHTML = ev.slice(0,8).map(e => { const m = MONSTERS.find(x => x.id === e.mon), t = tt[e.tid]; if (!m) return ''; return `<li>${monsterSVG(m)}<span><b>${esc(t ? t.name : '탐험대')}</b>이(가) <b>${m.name}</b>을(를) 잡았어요${firstOf(e.mon) === e.tid ? ' (첫 발견!)' : ''}</span><time>${hh(e.ts)}</time></li>`; }).join('') || '<li class="muted">아직 잡힌 몬스터가 없어요</li>';
+}
+function openBoard(){ netConnect(); renderBoard(); go('board'); }
+setInterval(() => { if (S.screen === 'board') renderBoard(); if (S.screen === 'field') renderNet(); }, 10000);
+
 /* ---------- 그림: 캐릭터 ---------- */
 function avatarSVG(id, color){
   const skin = '#FFE0C7';
@@ -541,14 +706,14 @@ function placeMonsters(g){
 const caughtCount = () => Object.keys(S.caught).filter(id => id !== BOSS).length;
 const bossOpen = () => caughtCount() >= BOSS_NEED;
 const activeSpots = () => S.spots.filter(s => !S.caught[s.m.id] && (!s.boss || bossOpen()));
-const score = () => Object.keys(S.caught).reduce((a,id) => a + (MONSTERS.find(m => m.id === id)?.pts || 0), 0);
+const score = () => Object.keys(S.caught).reduce((a,id) => a + (MONSTERS.find(m => m.id === id)?.pts || 0) + (S.team && firstOf(id) === S.team.id ? BONUS : 0), 0);
 const storeKey = () => 'jm2:' + S.game.seed + ':' + S.game.lat.toFixed(5);
 function save(){ if (S.game) LS.set(storeKey(), { team:S.team, caught:S.caught }); }
 function toXY(lat,lng){ const g = S.game; return { x:(lng-g.lng)*Math.cos(g.lat*Math.PI/180)*111320, y:(lat-g.lat)*110540 }; }
 
 /* ---------- 화면 전환 ---------- */
 function go(name){
-  ['title','tut','team','host','field','enc'].forEach(n => $('#scr-'+n).hidden = n !== name);
+  ['title','tut','team','host','field','enc','board'].forEach(n => $('#scr-'+n).hidden = n !== name);
   S.screen = name;
   if (name === 'field'){ resizeMap(); updateHUD(); }
 }
@@ -665,6 +830,7 @@ function finishMeasure(){
   hostStatus(`본부 위치 저장 완료 (오차 약 ${S.host.fix.acc}m)`, 'var(--grass)');
   makeGame();
 }
+const boardURL = g => location.origin + location.pathname + '#b=' + [g.lat.toFixed(6), g.lng.toFixed(6), g.r, g.seed].join(',');
 const gameURL = g => location.origin + location.pathname + '#g=' + [g.lat.toFixed(6), g.lng.toFixed(6), g.r, g.seed].join(',');
 function makeGame(){
   if (!S.host.fix) return;
@@ -682,6 +848,7 @@ function setGame(g, sim){
   S.game = g; S.sim = !!sim; S.spots = placeMonsters(g); S.world = null;
   const saved = LS.get(storeKey(), null);
   S.caught = saved?.caught || {}; S.team = saved?.team || null;
+  if (S.team && !S.team.id){ S.team.id = newId(); LS.set(storeKey(), { team:S.team, caught:S.caught }); }
   S.pos = null; S.cam = null; S.trail = []; S.level = -1; S.oob = false; S.target = null;
 }
 function startFlow(){
@@ -709,7 +876,8 @@ function enterField(){
   } else startGPS();
   if (!S.cam && S.pos) S.cam = { x:S.pos.x, y:S.pos.y };
   requestWake();
-  updateHUD();
+  netJoin();
+  updateHUD(); renderNet();
   if (!LS.get('jm2.fieldHint', false)){ toast('하얀 파동 안에 몬스터가 들어오면 수풀이 흔들려요! 걸어서 찾아봐요'); LS.set('jm2.fieldHint', true); }
 }
 function startGPS(){
@@ -741,6 +909,7 @@ function setPos(x, y, acc){
     S.trail.push({ x, y, ang, side: S.trail.length % 2 }); if (S.trail.length > 26) S.trail.shift();
   }
   if (prev && Math.hypot(prev.x - x, prev.y - y) > 0.3) S.moving = performance.now();
+  netPos();
   updateHUD();
 }
 async function requestWake(){ try{ if ('wakeLock' in navigator && !wakeLock) wakeLock = await navigator.wakeLock.request('screen'); wakeLock && wakeLock.addEventListener('release', () => wakeLock = null); }catch(e){} }
@@ -994,6 +1163,21 @@ function draw(t){
         drawPaw(c, gold ? '#FFC23D' : '#fff'); c.restore();
       }
     }
+    // 다른 탐험대
+    for (const [id, ot] of othersFresh()){
+      const v = FB.view[id] || (FB.view[id] = { x:ot.x, y:ot.y });
+      v.x += (ot.x - v.x)*0.08; v.y += (ot.y - v.y)*0.08;
+      const ox = sx(v.x), oy = sy(v.y); if (ox < -60 || ox > W+60 || oy < -80 || oy > H+60) continue;
+      const oa = avatarOf(ot.avatar), oimg = svgImg('av-' + oa.id, avatarSVG(oa.id, oa.color)), os = Math.max(44, Math.min(60, 2.4*VS));
+      c.fillStyle = 'rgba(0,0,0,.18)'; c.beginPath(); c.ellipse(ox, oy + 3, os*0.3, os*0.1, 0, 0, 7); c.fill();
+      if (oimg.complete) c.drawImage(oimg, ox - os/2, oy - os*1.25, os, os*1.4);
+      const label = String(ot.name || '').slice(0, 10);
+      c.font = '13px Jua, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+      const tw = c.measureText(label).width + 16;
+      c.fillStyle = oa.color; c.strokeStyle = OL; c.lineWidth = 2.5;
+      c.beginPath(); c.roundRect ? c.roundRect(ox - tw/2, oy + 8, tw, 20, 10) : c.rect(ox - tw/2, oy + 8, tw, 20); c.fill(); c.stroke();
+      c.fillStyle = '#fff'; c.lineWidth = 3; c.strokeText(label, ox, oy + 18.5); c.fillText(label, ox, oy + 18.5);
+    }
     // 내 캐릭터
     const av = S.team ? avatarOf(S.team.avatar) : AVATARS[0];
     const img = svgImg('av-' + av.id, avatarSVG(av.id, av.color));
@@ -1178,7 +1362,8 @@ async function catchSequence(bk, tx, ty, off){
   }
   await wait(reduced() ? 50 : 300);
   const m = E.spot.m;
-  S.caught[m.id] = Date.now(); save();
+  const first = FB.ready && !firstOf(m.id);
+  S.caught[m.id] = Date.now(); save(); netCatch(m.id);
   SFX.win(); vib([60,60,60,60,400]);
   const br = bk.getBoundingClientRect();
   burst(br.left + br.width/2, br.top + br.height/2);
@@ -1188,7 +1373,7 @@ async function catchSequence(bk, tx, ty, off){
   stopCam();
   bk.getAnimations().forEach(a => a.cancel()); bk.hidden = true;
   const unlocked = m.id !== BOSS && caughtCount() === BOSS_NEED;
-  revealCard(m, unlocked);
+  revealCard(m, unlocked, first);
 }
 function showBanner(text, miss){
   const el = document.createElement('div'); el.className = 'banner' + (miss ? ' miss' : ''); el.textContent = text;
@@ -1207,10 +1392,10 @@ function burst(x, y){
     el.animate([{ transform:'translate(0,0) scale(.4) rotate(0)', opacity:1 },{ transform:`translate(${Math.cos(a)*r}px, ${Math.sin(a)*r - 60}px) scale(1.1) rotate(${Math.random()*360}deg)`, opacity:0 }], { duration:900 + Math.random()*300, easing:'cubic-bezier(.2,.8,.4,1)' }).finished.then(() => el.remove());
   }
 }
-function revealCard(m, unlocked){
+function revealCard(m, unlocked, first){
   openModal(`<div class="card3d"><div class="mcard">
       <div class="mcard-art" style="background:${TIER_BG[m.tier]}"><span class="mcard-no">No.${m.id.slice(1)}</span><span class="mcard-tier stars">${TIER_STARS[m.tier]}</span>${monsterSVG(m)}</div>
-      <div class="mcard-body"><p class="eyebrow">새 몬스터를 도감에 등록했어요</p><h3>${m.name}</h3><p class="mcard-pts">+${m.pts}점</p><p>${m.desc}</p></div>
+      <div class="mcard-body"><p class="eyebrow">새 몬스터를 도감에 등록했어요</p><h3>${m.name}</h3><p class="mcard-pts">+${m.pts}점</p>${first ? `<span class="first-bonus">가장 먼저 찾았어요! +${BONUS}점</span>` : ''}<p>${m.desc}</p></div>
     </div></div>
     ${unlocked ? '<div class="mission-box" style="background:#FFF0C2;border:3px solid #2A1A22;border-radius:16px;padding:12px;font-family:var(--f-display);font-size:18px;text-align:center">전설의 몬스터가 본부 근처에 나타났어요!<br>지도의 금빛 발자국을 따라가요</div>' : ''}
     <button class="gbtn red big" data-act="cardDone">계속 탐험하기</button>`, true);
@@ -1251,6 +1436,7 @@ function showScore(){
 function showMenu(){
   openModal(`<h2>메뉴</h2><div class="menu-list">
     <button class="gbtn red" data-act="score">점수판 보기</button>
+    <button class="gbtn plum" data-act="openBoardMenu">실시간 순위판</button>
     <button class="gbtn" data-act="compass">${S.compass ? '나침반 끄기' : '나침반 켜기 (내가 보는 방향)'}</button>
     <button class="gbtn" data-act="tutMenu">게임 방법 다시 보기</button>
     <button class="gbtn" data-act="changeTeam">탐험대 바꾸기</button>
@@ -1296,7 +1482,7 @@ document.addEventListener('click', async e => {
     case 'teamGo': {
       const name = $('#teamName').value.trim();
       if (!name){ $('#teamName').focus(); $('#teamName').placeholder = '탐험대 이름을 먼저 써 주세요!'; return; }
-      SFX.init(); S.team = { name, avatar:S.avatar }; save(); enterField(); break;
+      SFX.init(); S.team = { id:S.keepId || newId(), name, avatar:S.avatar }; S.keepId = null; save(); enterField(); break;
     }
     case 'measure': measure(); break;
     case 'copy': {
@@ -1322,26 +1508,32 @@ document.addEventListener('click', async e => {
     case 'menu': showMenu(); break;
     case 'score': showScore(); break;
     case 'compass': toggleCompass(); break;
-    case 'changeTeam': closeModal(); S.team = null; save(); openTeam(); break;
+    case 'changeTeam': closeModal(); S.keepId = S.team && S.team.id; S.team = null; save(); openTeam(); break;
     case 'close': closeModal(); break;
+    case 'openBoardMenu': closeModal(); openBoard(); break;
+    case 'openBoardHost': setGame(S.host.game, false); history.replaceState(null, '', boardURL(S.host.game)); openBoard(); break;
+    case 'boardBack': if (S.team && S.game) enterField(); else { renderTitle(); go('title'); } break;
     case 'reset':
-      if (el.dataset.armed){ S.caught = {}; save(); S.level = -1; closeModal(); updateHUD(); toast('기록을 지웠어요. 처음부터 탐험해요!'); }
+      if (el.dataset.armed){ netReset(); S.caught = {}; save(); S.level = -1; closeModal(); updateHUD(); toast('기록을 지웠어요. 처음부터 탐험해요!'); }
       else { el.dataset.armed = '1'; el.textContent = '정말 지울까요? 한 번 더 누르면 지워져요'; }
       break;
   }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').dataset.lock) closeModal(); });
-window.addEventListener('hashchange', () => { if (/^#g=/.test(location.hash)) location.reload(); });
+window.addEventListener('hashchange', () => { if (/^#[gb]=/.test(location.hash)) location.reload(); });
 
 /* ---------- 시작 ---------- */
 (function boot(){
   const h = location.hash, m = h.match(/^#g=(-?[\d.]+),(-?[\d.]+),(\d+),(\d+)/);
+  const bm = h.match(/^#b=(-?[\d.]+),(-?[\d.]+),(\d+),(\d+)/);
   if (m) setGame({ lat:+m[1], lng:+m[2], r:Math.min(120, Math.max(15, +m[3])), seed:+m[4] }, false);
+  else if (bm) setGame({ lat:+bm[1], lng:+bm[2], r:Math.min(120, Math.max(15, +bm[3])), seed:+bm[4] }, false);
   else if (h === '#practice') setGame(PRACTICE, true);
   renderTitle(); renderRadius();
+  if (bm){ openBoard(); return; }
   go('title');
 })();
-window.__jm = { S, E, startEncounter, setPos };
+window.__jm = { S, E, FB, startEncounter, setPos, othersFresh };
 })();
 </script>
 </body>
