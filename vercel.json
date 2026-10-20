@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    { "source": "/game", "destination": "/monster/", "permanent": false },
+    { "source": "/monster", "destination": "/monster/", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/monster/:path*", "destination": "/monster/index.html" }
+  ]
+}

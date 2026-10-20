@@ -251,6 +251,11 @@ input[type=text]{width:100%;min-height:56px;border:3px solid var(--ink);border-r
 .mcard-pts{font-family:var(--f-display);font-size:22px;color:var(--grass)}
 .bigscore{font-family:var(--f-display);font-size:80px;line-height:1;text-align:center;font-variant-numeric:tabular-nums}
 .menu-list{display:flex;flex-direction:column;gap:12px}
+/* 몬스터 발견 연출 (소리·진동이 없어도 보이게) */
+.found-fx{position:absolute;inset:0;pointer-events:none;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.found-fx .glow{position:absolute;inset:0;box-shadow:inset 0 0 0 10px var(--berry),inset 0 0 80px 30px rgba(233,68,127,.55)}
+.found-fx .bang{width:120px;height:120px;border-radius:50%;background:#fff;border:6px solid var(--ink);display:grid;place-items:center;font-family:var(--f-display);font-size:88px;line-height:1;color:var(--tomato);box-shadow:0 8px 0 var(--ink)}
+.found-fx b{font-family:var(--f-display);font-weight:400;font-size:44px;color:#fff;-webkit-text-stroke:9px var(--ink);paint-order:stroke fill;text-shadow:0 6px 0 var(--ink)}
 /* 제작자 표시 */
 .credit{display:block;text-align:center;font-family:var(--f-display);font-size:14px;letter-spacing:1px;color:var(--ink);opacity:.7;text-decoration:none;padding:4px 0}
 .credit:hover,.credit:focus-visible{opacity:1;text-decoration:underline}
@@ -968,13 +973,26 @@ function updateHUD(){
   if (lv !== S.level){
     $('#detFace').innerHTML = detectorSVG(lv);
     [...$('#gauge').children].forEach((g,i) => g.style.backgroundColor = i <= lv ? T.c : '#fff');
-    if (lv === 4 && S.level !== 4){ SFX.appear(); vib([120,60,120,60,300]); }
+    if (lv === 4 && S.level !== 4){ SFX.appear(); vib([120,60,120,60,300]); foundFx(spot.boss); }
     else if (lv > S.level && S.level >= 0) vib(lv >= 3 ? [80,40,80] : [50]);
     S.level = lv;
   }
   S.nearId = lv === 4 ? spot.m.id : null;
   $('#meetBtn').hidden = lv !== 4;
   if (lv === 4) $('#meetBtn').textContent = spot.boss ? '전설의 몬스터 발견! 다가가기' : '몬스터 발견! 다가가기';
+}
+
+function foundFx(boss){
+  if (S.screen !== 'field') return;
+  document.querySelectorAll('.found-fx').forEach(el => el.remove());
+  const el = document.createElement('div'); el.className = 'found-fx';
+  el.innerHTML = `<div class="glow"></div><div class="bang">!</div><b>${boss ? '전설의 몬스터!' : '몬스터 발견!'}</b>`;
+  $('#scr-field').appendChild(el);
+  if (reduced()){ setTimeout(() => el.remove(), 1200); return; }
+  el.querySelector('.glow').animate([{ opacity:0 },{ opacity:1, offset:.15 },{ opacity:.2, offset:.4 },{ opacity:1, offset:.6 },{ opacity:0 }], { duration:1500, easing:'ease-out' });
+  el.querySelector('.bang').animate([{ transform:'scale(.2) rotate(-20deg)', opacity:0 },{ transform:'scale(1.25) rotate(8deg)', opacity:1, offset:.25 },{ transform:'scale(1) rotate(-4deg)', opacity:1, offset:.45 },{ transform:'scale(1) rotate(-4deg)', opacity:1, offset:.8 },{ transform:'scale(.9) translateY(-20px)', opacity:0 }], { duration:1500, easing:'ease-out', fill:'forwards' });
+  el.querySelector('b').animate([{ transform:'translateY(20px) scale(.6)', opacity:0 },{ transform:'translateY(0) scale(1.08)', opacity:1, offset:.3 },{ transform:'scale(1)', opacity:1, offset:.8 },{ transform:'translateY(-10px)', opacity:0 }], { duration:1500, easing:'ease-out', fill:'forwards' })
+    .finished.then(() => el.remove());
 }
 
 /* ---------- 지도 그리기 ---------- */
