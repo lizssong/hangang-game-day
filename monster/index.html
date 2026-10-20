@@ -256,6 +256,11 @@ input[type=text]{width:100%;min-height:56px;border:3px solid var(--ink);border-r
 .found-fx .glow{position:absolute;inset:0;box-shadow:inset 0 0 0 10px var(--berry),inset 0 0 80px 30px rgba(233,68,127,.55)}
 .found-fx .bang{width:120px;height:120px;border-radius:50%;background:#fff;border:6px solid var(--ink);display:grid;place-items:center;font-family:var(--f-display);font-size:88px;line-height:1;color:var(--tomato);box-shadow:0 8px 0 var(--ink)}
 .found-fx b{font-family:var(--f-display);font-weight:400;font-size:44px;color:#fff;-webkit-text-stroke:9px var(--ink);paint-order:stroke fill;text-shadow:0 6px 0 var(--ink)}
+/* 소리 버튼 */
+.sound-btn{white-space:nowrap;gap:4px;padding-left:8px;padding-right:8px}
+.sound-btn svg{width:22px;height:22px;flex:none}
+.sound-btn.off{--c:#E9DCD7}
+.title-sound{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:calc(16px + env(safe-area-inset-top,0px));z-index:3}
 /* 제작자 표시 */
 .credit{display:block;text-align:center;font-family:var(--f-display);font-size:14px;letter-spacing:1px;color:var(--ink);opacity:.7;text-decoration:none;padding:4px 0}
 .credit:hover,.credit:focus-visible{opacity:1;text-decoration:underline}
@@ -286,6 +291,7 @@ input[type=text]{width:100%;min-height:56px;border:3px solid var(--ink);border-r
   <div class="peek" id="peekL" style="left:2%;animation-delay:-.4s"></div>
   <div class="peek" id="peekC" style="left:35%;bottom:calc(30% + 2vw);animation-delay:-1.1s"></div>
   <div class="peek" id="peekR" style="right:2%;animation-delay:-1.8s"></div>
+  <button class="icon-btn title-sound" data-act="sound" id="titleSound" aria-label="소리 켜기/끄기"></button>
   <div class="title-wrap">
     <div class="logo"><span class="chip">한강 피크닉 탐험 게임</span><h1>잠원<br><span>몬스터</span><br>탐험대</h1></div>
     <p class="title-sub" id="titleSub">풀밭 수풀 속에 몬스터 12마리가 숨어 있어요!</p>
@@ -386,7 +392,7 @@ input[type=text]{width:100%;min-height:56px;border:3px solid var(--ink);border-r
     </div>
     <div class="tool-row">
       <button class="gbtn small" data-act="dex">도감</button>
-      <button class="gbtn small" data-act="sound" id="soundBtn">소리 켬</button>
+      <button class="gbtn small sound-btn" data-act="sound" id="soundBtn"></button>
       <button class="gbtn small" data-act="menu">메뉴</button>
     </div>
     <a class="credit on-field" href="https://litt.ly/ssongliz" target="_blank" rel="noopener">made by ssongliz</a>
@@ -645,6 +651,66 @@ function renderBoard(){
 function openBoard(){ netConnect(); renderBoard(); go('board'); }
 setInterval(() => { if (S.screen === 'board') renderBoard(); if (S.screen === 'field') renderNet(); }, 10000);
 
+/* ---------- 배경음악 (Web Audio로 직접 연주하는 피크닉 칩튠) ---------- */
+const MEL = [
+  [659,0,784,0,880,784,659,0],[523,0,587,659,0,0,523,0],[440,0,523,0,587,523,440,0],[392,0,440,523,0,587,0,0],
+  [659,0,784,0,1047,880,784,0],[880,0,784,659,0,523,0,0],[587,0,659,587,523,0,440,0],[523,0,0,0,392,440,523,0]];
+const ROOTS = [130.81,110,87.31,98];
+const BGM = {
+  on: LS.get('jm2.bgm', true), timer:null, next:0, step:0, out:null, noise:null,
+  start(){
+    const c = SFX.ctx; if (!c || this.timer || !this.on || !S.sound) return;
+    try{
+      this.out = c.createGain(); this.out.gain.setValueAtTime(0.0001, c.currentTime); this.out.gain.exponentialRampToValueAtTime(0.55, c.currentTime + 1.6); this.out.connect(c.destination);
+      if (!this.noise){ const b = c.createBuffer(1, c.sampleRate*0.06, c.sampleRate), d = b.getChannelData(0); for (let i=0;i<d.length;i++) d[i] = (Math.random()*2-1)*(1 - i/d.length); this.noise = b; }
+      this.next = c.currentTime + 0.15; this.step = 0;
+      this.timer = setInterval(() => this.tick(), 90);
+    }catch(e){}
+  },
+  stop(){
+    if (!this.timer) return; clearInterval(this.timer); this.timer = null;
+    const c = SFX.ctx, g = this.out; if (!c || !g) return;
+    try{ g.gain.cancelScheduledValues(c.currentTime); g.gain.setValueAtTime(Math.max(0.0001, g.gain.value), c.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + 0.35); setTimeout(() => g.disconnect(), 500); }catch(e){}
+  },
+  duck(on){ const c = SFX.ctx, g = this.out; if (!c || !g || !this.timer) return; try{ g.gain.cancelScheduledValues(c.currentTime); g.gain.setTargetAtTime(on ? 0.22 : 0.55, c.currentTime, 0.2); }catch(e){} },
+  tick(){
+    const c = SFX.ctx; if (!c) return; const e8 = 60/116/2;
+    if (this.next < c.currentTime) this.next = c.currentTime + 0.05;
+    while (this.next < c.currentTime + 0.35){ this.play(this.step, this.next, e8); this.next += e8; this.step = (this.step + 1) % 64; }
+  },
+  note(f, t, d, type, v){
+    const c = SFX.ctx, o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g); g.connect(this.out); o.start(t); o.stop(t + d + 0.05);
+  },
+  hat(t, v){
+    const c = SFX.ctx, s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    s.buffer = this.noise; f.type = 'highpass'; f.frequency.value = 6000; g.gain.value = v;
+    s.connect(f); f.connect(g); g.connect(this.out); s.start(t);
+  },
+  play(i, t, e8){
+    const bar = Math.floor(i/8) % 8, pos = i % 8, root = ROOTS[bar % 4];
+    if (pos === 0 || pos === 4) this.note(root, t, e8*1.7, 'triangle', 0.11);
+    if (pos === 2 || pos === 6) this.note(root*2, t, e8*0.7, 'triangle', 0.05);
+    const m = MEL[bar][pos]; if (m){ this.note(m, t, e8*0.85, 'square', 0.022); this.note(m*2, t, e8*0.4, 'sine', 0.008); }
+    if (pos % 2 === 1) this.hat(t, 0.025); else if (pos === 4) this.hat(t, 0.04);
+  },
+};
+function soundIcon(on){
+  return on
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="#2A1A22" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#FFC23D"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="#2A1A22" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#E9DCD7"/><path d="M16 9l5 6M21 9l-5 6"/></svg>';
+}
+function renderSound(){
+  const b = $('#soundBtn'); if (b){ b.innerHTML = soundIcon(S.sound) + (S.sound ? '소리 켬' : '소리 끔'); b.classList.toggle('off', !S.sound); b.setAttribute('aria-pressed', S.sound); }
+  const t = $('#titleSound'); if (t){ t.innerHTML = soundIcon(S.sound); t.setAttribute('aria-pressed', S.sound); }
+}
+function setSound(on){
+  S.sound = on; LS.set('jm2.sound', on); SFX.init(); renderSound();
+  if (on){ SFX.pop(); if (S.screen === 'field' || S.screen === 'enc') BGM.start(); } else BGM.stop();
+}
+
 /* ---------- 그림: 캐릭터 ---------- */
 function avatarSVG(id, color){
   const skin = '#FFE0C7';
@@ -763,8 +829,8 @@ function renderTitle(){
   } else {
     $('#titleSub').textContent = '풀밭 수풀 속에 몬스터 12마리가 숨어 있어요!';
     acts.innerHTML = `<button class="gbtn red big" data-act="toHost">진행자: 게임판 만들기</button>
-      <button class="gbtn green" data-act="practice">집에서 연습해 보기</button>
-      <button class="gbtn small" data-act="tut">게임 방법 보기</button><a class="credit" href="https://litt.ly/ssongliz" target="_blank" rel="noopener">made by <b>ssongliz</b></a>`;
+      <button class="gbtn green" data-act="quickGPS" id="quickBtn">지금 있는 곳에서 바로 해보기</button>
+      <div class="title-links"><button class="gbtn small" data-act="practice">손가락으로 연습</button><button class="gbtn small" data-act="tut">게임 방법</button></div><a class="credit" href="https://litt.ly/ssongliz" target="_blank" rel="noopener">made by <b>ssongliz</b></a>`;
   }
 }
 
@@ -862,11 +928,26 @@ function makeGame(){
 
 /* ---------- 게임 열기 ---------- */
 function setGame(g, sim){
+  if (sim) stopGPS();
   S.game = g; S.sim = !!sim; S.spots = placeMonsters(g); S.world = null;
   const saved = LS.get(storeKey(), null);
   S.caught = saved?.caught || {}; S.team = saved?.team || null;
   if (S.team && !S.team.id){ S.team.id = newId(); LS.set(storeKey(), { team:S.team, caught:S.caught }); }
   S.pos = null; S.cam = null; S.trail = []; S.level = -1; S.oob = false; S.target = null;
+}
+function stopGPS(){ if (gpsWatch !== null){ navigator.geolocation.clearWatch(gpsWatch); gpsWatch = null; } }
+function quickGPS(btn){
+  if (!('geolocation' in navigator)){ toast('이 폰은 위치 기능을 쓸 수 없어요'); return; }
+  SFX.init(); btn.disabled = true; btn.textContent = '내 위치 찾는 중… (밖이면 더 빨라요)';
+  navigator.geolocation.getCurrentPosition(p => {
+    btn.disabled = false;
+    const g = { lat:p.coords.latitude, lng:p.coords.longitude, r:30, seed:1000 + Math.floor(Math.random()*8999) };
+    history.replaceState(null, '', gameURL(g)); setGame(g, false); startFlow();
+    if (p.coords.accuracy > 25) setTimeout(() => toast(`지금 위치 오차가 약 ${Math.round(p.coords.accuracy)}m예요. 밖으로 나가면 더 정확해져요`), 1500);
+  }, err => {
+    btn.disabled = false; btn.textContent = '지금 있는 곳에서 바로 해보기';
+    toast(err.code === 1 ? '위치 권한이 꺼져 있어요. 브라우저 설정에서 위치를 허용해 주세요' : '위치를 못 찾았어요. 창가나 밖에서 다시 눌러 주세요');
+  }, { enableHighAccuracy:true, timeout:20000, maximumAge:0 });
 }
 function startFlow(){
   SFX.init();
@@ -885,11 +966,11 @@ function enterField(){
   const av = avatarOf(S.team.avatar);
   $('#hudAva').innerHTML = avatarSVG(av.id, av.color); $('#hudAva').style.background = av.color;
   $('#hudTeam').textContent = S.team.name;
-  $('#soundBtn').textContent = S.sound ? '소리 켬' : '소리 끔';
+  renderSound(); BGM.start();
   if (!S.world) buildWorldWhenReady();
   if (S.sim){
     if (!S.pos) S.pos = { x:0, y:-6, acc:3 };
-    $('#gpsChip').textContent = '연습 모드 · 땅을 누르면 걸어가요'; $('#gpsChip').classList.remove('bad');
+    $('#gpsChip').textContent = '손가락 연습 모드 · 땅을 누르면 걸어가요 (GPS 안 씀)'; $('#gpsChip').classList.remove('bad');
   } else startGPS();
   if (!S.cam && S.pos) S.cam = { x:S.pos.x, y:S.pos.y };
   requestWake();
@@ -908,8 +989,8 @@ function startGPS(){
     const Wt = sm.reduce((a,s) => a + s.w, 0);
     setPos(sm.reduce((a,s) => a + s.x*s.w, 0)/Wt, sm.reduce((a,s) => a + s.y*s.w, 0)/Wt, p.coords.accuracy);
     const acc = Math.round(p.coords.accuracy);
-    $('#gpsChip').textContent = `GPS 오차 약 ${acc}m` + (acc > 20 ? ' · 하늘이 트인 곳으로!' : '');
-    $('#gpsChip').classList.toggle('bad', acc > 20);
+    $('#gpsChip').textContent = `GPS 오차 약 ${acc}m` + (acc > 25 ? ' · 실내에선 부정확해요. 밖으로!' : acc > 15 ? ' · 하늘이 트인 곳으로!' : '');
+    $('#gpsChip').classList.toggle('bad', acc > 15);
   }, err => {
     $('#detWord').textContent = err.code === 1 ? '위치 허용이 필요해요' : '위치 신호를 못 잡았어요';
     $('#detSub').textContent = err.code === 1 ? '브라우저 설정 → 위치 → 허용으로 바꿔 주세요' : '잠시 후 다시 시도해요';
@@ -1299,7 +1380,7 @@ async function startEncounter(spot){
   $('#monWrap').style.transform = '';
   $('#encName').textContent = '???'; $('#encStars').textContent = TIER_STARS[m.tier] + ' ' + m.tier;
   $('#basket').hidden = true; $('#throwHint').hidden = true; $('#dlg').hidden = false;
-  startCam();
+  startCam(); BGM.start(); BGM.duck(true);
   SFX.appear(); vib([80,40,80,40,200]);
   if (!reduced()) $('#mon').parentElement.animate([{ transform:'translateY(60px) scale(.2)', opacity:0 },{ transform:'translateY(-30px) scale(1.12)', opacity:1, offset:.6 },{ transform:'translateY(0) scale(1)', opacity:1 }], { duration:650, easing:'cubic-bezier(.2,1.2,.4,1)' });
   await typeText(spot.boss ? '두근두근… 전설의 몬스터가 나타났다!' : '앗! 수풀 속에서 야생 몬스터가 튀어나왔다!');
@@ -1431,6 +1512,7 @@ function revealCard(m, unlocked, first){
     <button class="gbtn red big" data-act="cardDone">계속 탐험하기</button>`, true);
 }
 function leaveEncounter(){
+  BGM.duck(false);
   stopCam(); E.phase = ''; clearInterval(E.typing);
   $('#basket').getAnimations().forEach(a => a.cancel());
   enterField();
@@ -1467,7 +1549,8 @@ function showMenu(){
   openModal(`<h2>메뉴</h2><div class="menu-list">
     <button class="gbtn red" data-act="score">점수판 보기</button>
     <button class="gbtn plum" data-act="openBoardMenu">실시간 순위판</button>
-    <button class="gbtn" data-act="compass">${S.compass ? '나침반 끄기' : '나침반 켜기 (내가 보는 방향)'}</button>
+    <button class="gbtn" data-act="compass">${S.compass ? '나침반 끄기' : '나침반 켜기'}</button>
+    <button class="gbtn" data-act="bgm">${BGM.on ? '배경음악 끄기' : '배경음악 켜기'}</button>
     <button class="gbtn" data-act="tutMenu">게임 방법 다시 보기</button>
     <button class="gbtn" data-act="changeTeam">탐험대 바꾸기</button>
     <button class="gbtn small" data-act="close">닫기</button></div>`);
@@ -1534,7 +1617,9 @@ document.addEventListener('click', async e => {
     case 'camToggle': E.camOn = !E.camOn; LS.set('jm2.cam', E.camOn); if (E.camOn) startCam(); else stopCam(); break;
     case 'cardDone': closeModal(); leaveEncounter(); $('#scorePill').classList.remove('bump'); void $('#scorePill').offsetWidth; $('#scorePill').classList.add('bump'); break;
     case 'dex': showDex(); break;
-    case 'sound': S.sound = !S.sound; LS.set('jm2.sound', S.sound); el.textContent = S.sound ? '소리 켬' : '소리 끔'; SFX.init(); SFX.pop(); break;
+    case 'sound': setSound(!S.sound); toast(S.sound ? '소리를 켰어요 (아이폰은 무음 스위치도 풀어 주세요)' : '소리를 껐어요'); break;
+    case 'bgm': BGM.on = !BGM.on; LS.set('jm2.bgm', BGM.on); closeModal(); SFX.init(); if (BGM.on){ BGM.start(); toast('배경음악을 켰어요'); } else { BGM.stop(); toast('배경음악을 껐어요'); } break;
+    case 'quickGPS': quickGPS(el); break;
     case 'menu': showMenu(); break;
     case 'score': showScore(); break;
     case 'compass': toggleCompass(); break;
@@ -1559,11 +1644,11 @@ window.addEventListener('hashchange', () => { if (/^#[gb]=/.test(location.hash))
   if (m) setGame({ lat:+m[1], lng:+m[2], r:Math.min(120, Math.max(15, +m[3])), seed:+m[4] }, false);
   else if (bm) setGame({ lat:+bm[1], lng:+bm[2], r:Math.min(120, Math.max(15, +bm[3])), seed:+bm[4] }, false);
   else if (h === '#practice') setGame(PRACTICE, true);
-  renderTitle(); renderRadius();
+  renderTitle(); renderRadius(); renderSound();
   if (bm){ openBoard(); return; }
   go('title');
 })();
-window.__jm = { S, E, FB, startEncounter, setPos, othersFresh };
+window.__jm = { S, E, FB, BGM, startEncounter, setPos, othersFresh };
 })();
 </script>
 </body>
