@@ -178,6 +178,20 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
 .alt ol{margin:8px 0 0;padding-left:22px;display:grid;gap:4px}
 .alt .need{margin-top:8px;font-size:14px;color:var(--ink-soft)}
 .alt .need b{font-family:var(--font-display);font-weight:400;color:var(--persimmon)}
+.linkcard{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:16px;border-radius:var(--r-md);background:var(--ink);color:var(--paper);text-decoration:none;transition:transform .15s ease}
+.linkcard:hover{transform:translateY(-2px)}
+.linkcard:active{transform:scale(.98)}
+.linkcard:focus-visible{outline:3px solid var(--plum);outline-offset:2px}
+.linkcard b{font-family:var(--font-display);font-weight:400;font-size:20px;display:block}
+.linkcard small{opacity:.8;font-size:14px}
+.linkcard .go{font-family:var(--font-display);font-size:28px;color:var(--persimmon)}
+.opt{display:inline-block;font-family:var(--font-body);font-size:12px;padding:2px 8px;border-radius:999px;background:var(--paper);border:1px solid var(--line);color:var(--ink-soft);vertical-align:middle;white-space:nowrap}
+.checkgroup h3 .opt{font-size:13px;margin-left:6px}
+.checklist.optional .check{border-style:dashed}
+.hostbtn{display:inline-flex;align-items:center;gap:8px;justify-self:start;font-family:var(--font-display);font-size:17px;padding:10px 20px;border-radius:999px;background:var(--persimmon);color:var(--card);text-decoration:none;transition:transform .15s ease}
+.hostbtn:hover{transform:translateY(-2px)}
+.hostbtn:active{transform:scale(.97)}
+.hostbtn:focus-visible{outline:3px solid var(--plum);outline-offset:2px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
 @media (max-width:420px){.game-head{padding:16px 16px 12px}.game-body{padding:0 16px 16px}.num{font-size:48px;min-width:40px}.game h3{font-size:24px}.tl{grid-template-columns:56px 1fr;gap:12px}.tl time{font-size:17px}}
 </style>
@@ -192,6 +206,7 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
       <dt>일시</dt><dd>10/24 (토) 15:30 – 18:30</dd>
       <dt>장소</dt><dd>잠원지구 한강놀이터</dd>
     </dl>
+    <a class="hostbtn" href="host/">진행자 모드 열기 →</a>
     <svg class="scene" viewBox="0 0 680 200" role="img" aria-label="한강 잔디밭 돗자리와 공을 든 아이들 그림">
       <rect width="680" height="200" fill="var(--grass-tint)"/>
       <path d="M0 70 Q170 50 340 68 T680 60 L680 98 Q500 108 340 96 T0 102Z" fill="var(--plum-tint)"/>
@@ -223,6 +238,7 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
   <nav class="nav" aria-label="바로가기">
     <div class="nav-inner">
       <a class="chip" href="#schedule">일정</a>
+      <a class="chip" href="host/">진행자 모드</a>
       <a class="chip" href="#mom">엄마 역할</a>
       <a class="chip" href="#g1">1 꼬리잡기</a>
       <a class="chip" href="#g2">2 수건돌리기</a>
@@ -332,6 +348,7 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
             <ol><li>쉬는 시간에 엄마들이 숫자 쪽지를 정해진 범위 안에 숨겨요.</li><li>"찾기 시작!" 하면 한 사람이 쪽지 1장씩만 찾아요.</li><li>찾은 숫자와 같은 번호의 랜덤선물을 받아요.</li></ol></div>
           <div class="mom"><b>엄마</b><span>각 집에서 가져온 랜덤선물에 번호를 붙여 두세요. 쪽지는 아이 수보다 1~2장 더 숨기면 좋아요.</span></div>
           <div class="tip"><b>순서 팁</b> 빨리 찾은 큰 아이가 동생 쪽지 찾기를 도와주면 보너스 박수!</div>
+          <a class="linkcard" href="monster/"><span><b>휴대폰 보물찾기 · 잠원 몬스터 탐험대</b><small>수풀 속 몬스터를 찾아 바구니로 잡는 디지털 버전이에요. 쪽지 대신 써도 돼요.</small></span><span class="go" aria-hidden="true">→</span></a>
           <div class="variant"><b>이런 버전도 가능</b><ul><li><a href="#a5">추억의 뽑기</a> <span>쪽지 찾기 대신 뽑기판으로 선물 번호 정하기.</span></li><li><a href="#a6">박 터트리기</a> <span>선물 대신 간식을 박 속에 넣어 피날레로.</span></li></ul></div>
         </div>
       </article>
@@ -392,6 +409,19 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
     </div>
 
     <div class="checkgroup">
+      <h3>확장 게임 준비물 <span class="opt">필수 아님</span></h3>
+      <p class="sec-sub" style="margin:0">확장 게임을 할 경우에만 챙기세요.</p>
+      <div class="checklist optional">
+        <label class="check"><input type="checkbox" id="o1"><span class="box"></span><span class="txt">풍선 · 끈 · 테이프 <span class="opt">필수 아님</span><small>꼬리 풍선 터트리기 · 풍선 다 같이 지키기</small></span></label>
+        <label class="check"><input type="checkbox" id="o2"><span class="box"></span><span class="txt">탁구공 · 숟가락 11개 · 종이컵 2개 <span class="opt">필수 아님</span><small>숟가락 탁구공 옮기기</small></span></label>
+        <label class="check"><input type="checkbox" id="o3"><span class="box"></span><span class="txt">훌라후프 <span class="opt">필수 아님</span><small>신발 과녁 던지기 · 돗자리로 대신해도 돼요</small></span></label>
+        <label class="check"><input type="checkbox" id="o4"><span class="box"></span><span class="txt">뽑기판 (11칸 이상) <span class="opt">필수 아님</span><small>추억의 뽑기</small></span></label>
+        <label class="check"><input type="checkbox" id="o5"><span class="box"></span><span class="txt">채반 2개 · 끈 · 콩주머니 <span class="opt">필수 아님</span><small>박 터트리기 · 간식은 공용 간식 일부 사용</small></span></label>
+        <label class="check"><input type="checkbox" id="o6"><span class="box"></span><span class="txt">스케치북 · 굵은 매직 <span class="opt">필수 아님</span><small>몸으로 표현해요</small></span></label>
+      </div>
+    </div>
+
+    <div class="checkgroup">
       <h3>공용 지출</h3>
       <div class="spend">
         <div><b>아이들 간식</b><span>청포도 음료수 1팩, 스낵 4종 (빈츠, 참쌀설병, 구운감자, 칸쵸)</span></div>
@@ -411,29 +441,29 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
 
       <article class="alt" id="a2"><div class="alt-head"><h3>꼬리 풍선 터트리기</h3><span class="from">꼬리잡기 가위바위보 변형</span></div>
         <p>팀전. 두 가지 색 풍선으로 팀을 구분해요.</p>
-        <details><summary>규칙 보기</summary><ol><li>팀 색깔 풍선을 끈으로 허리 뒤에 달아요.</li><li>"시작!" 하면 상대 팀 풍선을 손으로 터트려요.</li><li>풍선이 다 터진 팀이 져요.</li></ol><p class="need"><b>준비물</b> 두 가지 색 풍선, 끈, 테이프 · 바람 불면 날아가니 여분을 넉넉히</p></details></article>
+        <details><summary>규칙 보기</summary><ol><li>팀 색깔 풍선을 끈으로 허리 뒤에 달아요.</li><li>"시작!" 하면 상대 팀 풍선을 손으로 터트려요.</li><li>풍선이 다 터진 팀이 져요.</li></ol><p class="need"><b>준비물</b> <span class="opt">필수 아님</span> 두 가지 색 풍선, 끈, 테이프 · 바람 불면 날아가니 여분을 넉넉히</p></details></article>
 
       <article class="alt" id="a3"><div class="alt-head"><h3>숟가락 탁구공 옮기기</h3><span class="from">과자따먹기 변형</span></div>
         <p>팀 릴레이. 엄마는 3분 타이머만 맡으면 돼요.</p>
-        <details><summary>규칙 보기</summary><ol><li>팀별로 한 줄로 서서 모두 숟가락을 들어요.</li><li>손 대지 않고 다음 사람 숟가락으로 탁구공을 넘겨요.</li><li>맨 끝 사람이 종이컵에 넣으면 1점, 떨어뜨리면 맨 앞부터 다시.</li><li>3분 동안 더 많이 옮긴 팀이 이겨요.</li></ol><p class="need"><b>준비물</b> 탁구공 여러 개, 숟가락 11개, 종이컵 2개 · 10살은 숟가락을 입에 물고, 7살은 손으로</p></details></article>
+        <details><summary>규칙 보기</summary><ol><li>팀별로 한 줄로 서서 모두 숟가락을 들어요.</li><li>손 대지 않고 다음 사람 숟가락으로 탁구공을 넘겨요.</li><li>맨 끝 사람이 종이컵에 넣으면 1점, 떨어뜨리면 맨 앞부터 다시.</li><li>3분 동안 더 많이 옮긴 팀이 이겨요.</li></ol><p class="need"><b>준비물</b> <span class="opt">필수 아님</span> 탁구공 여러 개, 숟가락 11개, 종이컵 2개 · 10살은 숟가락을 입에 물고, 7살은 손으로</p></details></article>
 
       <article class="alt" id="a4"><div class="alt-head"><h3>신발 과녁 던지기</h3><span class="from">신발 멀리던지기 변형</span></div>
         <p>멀리 대신 정확하게. 7살도 이길 수 있어요.</p>
-        <details><summary>규칙 보기</summary><ol><li>훌라후프나 돗자리를 과녁으로 놓아요.</li><li>출발선에서 신발을 툭 차서 과녁 안에 넣어요.</li><li>들어가면 1점, 팀 점수를 합해요.</li></ol><p class="need"><b>준비물</b> 훌라후프 또는 돗자리 · 7살은 출발선을 한 걸음 앞으로</p></details></article>
+        <details><summary>규칙 보기</summary><ol><li>훌라후프나 돗자리를 과녁으로 놓아요.</li><li>출발선에서 신발을 툭 차서 과녁 안에 넣어요.</li><li>들어가면 1점, 팀 점수를 합해요.</li></ol><p class="need"><b>준비물</b> <span class="opt">필수 아님</span> 훌라후프 또는 돗자리 · 7살은 출발선을 한 걸음 앞으로</p></details></article>
 
       <article class="alt" id="a5"><div class="alt-head"><h3>추억의 뽑기</h3><span class="from">보물찾기 변형</span></div>
         <p>개인. 운으로 정해져서 나이 차이가 상관없어요.</p>
-        <details><summary>규칙 보기</summary><ol><li>모은 랜덤선물에 번호를 붙여 펼쳐 놓아요.</li><li>한 명씩 뽑기판을 뜯어 번호를 확인해요.</li><li>같은 번호의 선물을 가져가요. 막내부터 뽑으면 서운한 아이가 줄어요.</li></ol><p class="need"><b>준비물</b> 뽑기판 (11칸 이상)</p></details></article>
+        <details><summary>규칙 보기</summary><ol><li>모은 랜덤선물에 번호를 붙여 펼쳐 놓아요.</li><li>한 명씩 뽑기판을 뜯어 번호를 확인해요.</li><li>같은 번호의 선물을 가져가요. 막내부터 뽑으면 서운한 아이가 줄어요.</li></ol><p class="need"><b>준비물</b> <span class="opt">필수 아님</span> 뽑기판 (11칸 이상)</p></details></article>
 
       <article class="alt" id="a6"><div class="alt-head"><h3>박 터트리기</h3><span class="from">신발 던지기 · 보물찾기 변형</span></div>
         <p>전체 피날레. 간식이 와르르 쏟아지며 마무리돼요.</p>
-        <details><summary>규칙 보기</summary><ol><li>채반 두 개를 맞대 박을 만들고 개별포장 간식을 넣어요.</li><li>나무나 벤치에 끈으로 매달아요. 손으로 들고 있지 않아도 돼요.</li><li>"하나, 둘, 셋!"에 맞춰 모두 콩주머니를 던져요.</li><li>박이 열리면 다 같이 간식 줍기!</li></ol><p class="need"><b>준비물</b> 채반 2개, 끈, 테이프, 콩주머니, 개별포장 간식 (공용 간식을 일부 넣어도 좋아요)</p></details></article>
+        <details><summary>규칙 보기</summary><ol><li>채반 두 개를 맞대 박을 만들고 개별포장 간식을 넣어요.</li><li>나무나 벤치에 끈으로 매달아요. 손으로 들고 있지 않아도 돼요.</li><li>"하나, 둘, 셋!"에 맞춰 모두 콩주머니를 던져요.</li><li>박이 열리면 다 같이 간식 줍기!</li></ol><p class="need"><b>준비물</b> <span class="opt">필수 아님</span> 채반 2개, 끈, 테이프, 콩주머니, 개별포장 간식 (공용 간식을 일부 넣어도 좋아요)</p></details></article>
 
       <article class="alt" id="a7"><div class="alt-head"><h3>몸으로 표현해요</h3><span class="from">OX 퀴즈 변형</span></div>
         <p>팀전. 7살이 맞히면 2점 주는 동생 보너스가 있어요.</p>
         <details><summary>규칙 · 나이별 제시어</summary><ol><li>대장이 스케치북에 제시어를 적어 표현할 친구에게만 보여줘요.</li><li>말 없이 몸으로만 표현하고, 같은 팀이 1분 안에 맞히면 1점.</li><li>모두 한 번씩 돌아가며 표현해요.</li></ol>
           <p class="need"><b>쉬움 · 7살</b> 토끼, 코끼리, 펭귄, 꽃게, 개구리, 양치하기, 라면 먹기<br><b>보통 · 9살</b> 소방관, 요리사, 미용사, 축구, 피겨스케이팅, 볼링<br><b>어려움 · 10살</b> 엘리베이터에 갇힘, 아이스크림 떨어뜨림, 모기 잡기, 따릉이 타기, 오리배 타기</p>
-          <p class="need"><b>준비물</b> 스케치북, 굵은 매직</p></details></article>
+          <p class="need"><b>준비물</b> <span class="opt">필수 아님</span> 스케치북, 굵은 매직</p></details></article>
 
       <article class="alt" id="a8"><div class="alt-head"><h3>술래 놀이 3종</h3><span class="from">수건돌리기 변형</span></div>
         <p>준비물 없이 아이들끼리 바로 하는 놀이예요.</p>
@@ -441,7 +471,7 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
 
       <article class="alt" id="a9"><div class="alt-head"><h3>풍선 다 같이 지키기</h3><span class="from">과자따먹기 변형</span></div>
         <p>모두 한 팀이 되는 협동 게임이에요.</p>
-        <details><summary>규칙 보기</summary><ol><li>풍선 1개를 위로 쳐 올려요.</li><li>땅에 떨어뜨리지 않고 몇 번 칠 수 있는지 다 같이 세요.</li><li>같은 사람이 연속으로 두 번 치면 안 돼요.</li></ol><p class="need"><b>준비물</b> 풍선 1~2개</p></details></article>
+        <details><summary>규칙 보기</summary><ol><li>풍선 1개를 위로 쳐 올려요.</li><li>땅에 떨어뜨리지 않고 몇 번 칠 수 있는지 다 같이 세요.</li><li>같은 사람이 연속으로 두 번 치면 안 돼요.</li></ol><p class="need"><b>준비물</b> <span class="opt">필수 아님</span> 풍선 1~2개</p></details></article>
     </div>
   </section>
 
@@ -456,11 +486,12 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
 <script>
 (function(){
   var boxes=[].slice.call(document.querySelectorAll('.checklist input'));
+  var req=[].slice.call(document.querySelectorAll('.checklist:not(.optional) input'));
   var key='hangang-prep-v2', saved={};
   try{saved=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){}
   function update(){
-    var n=boxes.filter(function(b){return b.checked}).length;
-    document.getElementById('progress').textContent=n+' / '+boxes.length+(n===boxes.length?' 준비 끝!':' 준비 완료');
+    var n=req.filter(function(b){return b.checked}).length;
+    document.getElementById('progress').textContent='필수 '+n+' / '+req.length+(n===req.length?' 준비 끝!':' 준비 완료');
   }
   boxes.forEach(function(b){
     if(saved[b.id]) b.checked=true;

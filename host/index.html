@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>진행자 모드 · 한강 놀이</title>
+<meta name="description" content="10/24 한강 놀이 진행자용 화면 — 지금 할 순서, 다음 순서, 10분 타이머, OX 퀴즈 진행">
+<meta property="og:title" content="진행자 모드 · 한강 놀이 프로그램북">
+<meta property="og:image" content="https://hangang-game-day.vercel.app/og.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
+<style>
+/* Layout: 운동회 전광판 — 지금 순서를 화면 가득, 아래에 다음 순서와 큰 조작 버튼 */
+:root{
+  --paper:#FFF6F8; --card:#FFFFFF; --ink:#2A1838; --ink-soft:#6B5878;
+  --persimmon:#FF5A36; --persimmon-tint:#FFE3DB; --grass:#1E9C5A; --grass-tint:#DDF5E7;
+  --plum:#7A2E8E; --plum-tint:#F1E2F6; --line:#EAD6E2;
+  --font-display:"Jua","Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font-body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  --r-sm:8px; --r-md:16px; --r-lg:24px;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root{--paper:#1A1222;--card:#251B2F;--ink:#FBEFF6;--ink-soft:#C7B4D2;--persimmon:#FF7A5C;--persimmon-tint:#4A231C;--grass:#4FD08A;--grass-tint:#183A28;--plum:#D59BE6;--plum-tint:#3A2246;--line:#3C2C48;color-scheme:dark}
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 32px}
+.wrap{max-width:640px;margin:0 auto;display:grid;gap:16px}
+h1,h2,h3{font-family:var(--font-display);font-weight:400;margin:0;line-height:1.15;text-wrap:balance}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--plum);outline-offset:2px}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.back{font-family:var(--font-display);color:var(--ink-soft);text-decoration:none;font-size:15px}
+.back:hover{color:var(--persimmon)}
+.clock{font-family:var(--font-display);font-size:20px;font-variant-numeric:tabular-nums}
+
+.bar{display:flex;gap:4px}
+.bar i{flex:1;height:8px;border-radius:4px;background:var(--line);transition:background .2s}
+.bar i.done{background:var(--grass)}
+.bar i.cur{background:var(--persimmon)}
+
+.now{background:var(--card);border:3px solid var(--ink);border-radius:var(--r-lg);padding:24px;display:grid;gap:16px}
+.now.kind-game{border-color:var(--persimmon)}
+.now.kind-break{border-style:dashed;border-color:var(--plum)}
+.meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pill{font-family:var(--font-display);font-size:15px;padding:4px 14px;border-radius:999px;background:var(--persimmon-tint)}
+.pill.break{background:var(--plum-tint)}
+.pill.meal{background:var(--grass-tint)}
+.time{font-family:var(--font-display);font-size:20px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.now h1{font-size:clamp(40px,12vw,64px)}
+.say{font-family:var(--font-display);font-size:22px;padding:12px 16px;border-radius:var(--r-sm);background:var(--persimmon-tint)}
+.say::before{content:"외칠 말 · ";color:var(--persimmon)}
+.steps{margin:0;padding-left:24px;display:grid;gap:6px;font-size:18px}
+.todo{padding:12px 16px;border-radius:var(--r-sm);background:var(--grass-tint)}
+.todo b{font-family:var(--font-display);font-weight:400;color:var(--grass)}
+
+.timer{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:16px;border-radius:var(--r-md);background:var(--ink);color:var(--paper)}
+.timer .t{font-family:var(--font-display);font-size:clamp(32px,10vw,44px);font-variant-numeric:tabular-nums;line-height:1}
+.timer.over .t{color:var(--persimmon)}
+.tbtn{white-space:nowrap;border:0;border-radius:999px;padding:12px 16px;font-family:var(--font-display);font-size:17px;background:var(--paper);color:var(--ink);cursor:pointer;transition:transform .15s}
+.tbtn:hover{transform:translateY(-2px)}
+.tbtn:active{transform:scale(.96)}
+.tbtn.ghost{background:transparent;color:var(--paper);border:2px solid var(--ink-soft)}
+
+.quiz{display:grid;gap:12px;padding:16px;border-radius:var(--r-md);background:var(--plum-tint)}
+.qnum{font-family:var(--font-display);color:var(--plum)}
+.qtext{font-family:var(--font-display);font-size:28px;line-height:1.3}
+.qans{font-family:var(--font-display);font-size:24px;min-height:1.4em}
+.qans b{font-weight:400;font-size:40px;color:var(--grass);margin-right:8px}
+.qrow{display:flex;flex-wrap:wrap;gap:8px}
+.qbtn{border:2px solid var(--plum);border-radius:999px;padding:10px 18px;background:var(--card);font-family:var(--font-display);font-size:17px;cursor:pointer;transition:transform .15s}
+.qbtn:hover{transform:translateY(-2px)}
+.qbtn:active{transform:scale(.96)}
+.qbtn.main{background:var(--plum);color:var(--card)}
+
+.next{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:baseline;padding:16px 20px;border-radius:var(--r-md);background:var(--card);border:1px solid var(--line)}
+.next span{font-family:var(--font-display);color:var(--ink-soft)}
+.next b{font-family:var(--font-display);font-weight:400;font-size:22px}
+
+.nav{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:1fr 2fr;gap:8px}
+.nbtn{border:0;border-radius:var(--r-md);padding:18px;font-family:var(--font-display);font-size:20px;cursor:pointer;transition:transform .15s,opacity .15s}
+.nbtn:hover{transform:translateY(-2px)}
+.nbtn:active{transform:scale(.97)}
+.nbtn:disabled{opacity:.35;transform:none;cursor:default}
+.prev{background:var(--card);border:2px solid var(--ink)}
+.go{background:var(--persimmon);color:var(--card)}
+.sync{justify-self:center;border:0;background:none;color:var(--ink-soft);font-size:15px;text-decoration:underline;cursor:pointer;padding:8px}
+.sync:hover{color:var(--persimmon)}
+
+.anim{animation:in .28s ease both}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../">← 프로그램북</a><span class="clock" id="clock">--:--</span></div>
+  <div class="bar" id="bar" aria-hidden="true"></div>
+
+  <main class="now" id="now" aria-live="polite"></main>
+
+  <div class="timer" id="timer">
+    <span class="t" id="tval">10:00</span>
+    <button class="tbtn" id="tstart" type="button">10분 시작</button>
+    <button class="tbtn ghost" id="treset" type="button">초기화</button>
+  </div>
+
+  <div class="next" id="next"></div>
+
+  <button class="sync" id="sync" type="button">지금 시각에 맞는 순서로 이동</button>
+
+  <div class="nav">
+    <button class="nbtn prev" id="prev" type="button">이전</button>
+    <button class="nbtn go" id="go" type="button">다음 순서 →</button>
+  </div>
+</div>
+
+<script>
+(function(){
+var S=[
+ {t:'15:30',kind:'meet',tag:'집합',title:'집합',say:'다 모였나요? 돗자리 펴고 자리 잡아요!',todo:'돗자리 펴기, 짐 한곳에 모으기, 아이 11명 확인'},
+ {t:'15:45',kind:'meet',tag:'준비',title:'팀 나누기',say:'손바닥 뒤집기!',steps:['모두 손바닥 또는 손등을 내밀어요.','손바닥 팀 / 손등 팀으로 나눠요. 인원이 안 맞으면 많은 쪽만 다시.','팀 색깔 시트지를 옷에 붙여요.'],todo:'11명이라 한 팀이 1명 많아요. 적은 팀에 엄마 1명이 들어가요.'},
+ {t:'15:55',kind:'game',tag:'게임 1 · 팀전',title:'꼬리잡기 가위바위보',say:'머리끼리 가위바위보!',steps:['팀별로 앞사람 어깨를 잡고 한 줄 기차.','머리끼리 가위바위보, 이긴 팀 머리가 상대 꼬리를 잡으러 가요.','꼬리를 잡거나 줄이 끊어지면 1점. 3점 먼저 내면 승리.'],todo:'점수만 세 주세요.'},
+ {t:'16:05',kind:'break',tag:'휴식 10분',title:'쉬는 시간',say:'물 마시고 10분 쉬어요!',todo:'다음 게임 준비물: 수건 1장'},
+ {t:'16:15',kind:'game',tag:'게임 2 · 개인전',title:'수건돌리기',say:'동그랗게 앉아요!',steps:['동그랗게 안쪽을 보고 앉아요.','술래가 몰래 수건을 놓으면 들고 쫓아가요.','술래가 빈자리에 먼저 앉으면 새 술래.'],todo:'엄마들도 같이 앉으면 더 재밌어요.'},
+ {t:'16:25',kind:'break',tag:'휴식 10분',title:'쉬는 시간 · 과자 줄 세팅',say:'간식 먹으면서 쉬어요!',todo:'엄마 2명: 줄넘기 줄을 나무나 벤치에 걸고, 양파링을 끈+빨래집게로 매달기'},
+ {t:'16:35',kind:'game',tag:'게임 3 · 팀전',title:'과자따먹기',say:'손은 뒤로! 입으로만!',steps:['팀별로 출발선에 한 줄.','한 명씩 달려가 손을 뒤로 하고 양파링을 입으로 따 먹어요.','돌아와 다음 친구와 손바닥 터치. 먼저 끝난 팀 승리.'],todo:'7살 차례에는 줄을 조금 낮춰 주세요.'},
+ {t:'16:45',kind:'break',tag:'휴식 10분',title:'쉬는 시간',say:'10분 쉬어요!',todo:'신발 차는 방향에 사람·돌·유리 조각이 없는지 확인'},
+ {t:'16:55',kind:'game',tag:'게임 4 · 팀전',title:'신발 멀리던지기',say:'앞에 사람 없을 때만 차요!',steps:['출발선에서 신발을 반쯤 벗어요.','발을 차올려 신발을 멀리 날려요.','팀에서 가장 멀리 간 기록으로 겨뤄요.'],todo:'떨어진 자리에 표시만 해 주세요.'},
+ {t:'17:05',kind:'break',tag:'휴식 10분',title:'쉬는 시간 · 보물 숨기기',say:'눈 감고 10까지 세기!',todo:'아이들이 쉬는 동안 숫자 쪽지 숨기기 (아이 수보다 1~2장 더). 랜덤선물에 번호 붙이기.'},
+ {t:'17:15',kind:'game',tag:'게임 5 · 개인전',title:'보물찾기',say:'한 사람에 쪽지 1장만!',steps:['정해진 범위 안에서 숫자 쪽지를 찾아요.','찾은 숫자와 같은 번호의 랜덤선물을 받아요.','큰 아이가 동생을 도와주면 보너스 박수!'],todo:'휴대폰 버전: 프로그램북의 "잠원 몬스터 탐험대"를 써도 돼요.'},
+ {t:'17:25',kind:'break',tag:'휴식 10분',title:'쉬는 시간',say:'마지막 게임 전에 쉬어요!',todo:'O 구역 / X 구역을 정해 두기'},
+ {t:'17:35',kind:'quiz',tag:'게임 6 · 개인전',title:'OX 퀴즈',say:'정답이라고 생각하는 쪽으로 이동!',todo:'틀린 친구는 응원석으로. 끝까지 남은 친구가 우승!'},
+ {t:'17:50',kind:'meet',tag:'정리',title:'정리 · 저녁 준비',say:'다 같이 쓰레기 줍기 미션!',todo:'쿠팡이츠 한솥도시락 도착 확인, 손 닦기'},
+ {t:'18:00',kind:'meal',tag:'저녁',title:'저녁식사',say:'맛있게 먹어요!',todo:'한솥도시락 나눠 주기'},
+ {t:'18:30',kind:'meet',tag:'마무리',title:'자유롭게 해산',say:'오늘 즐거웠어요! 단체 사진 한 장!',todo:'돗자리·쓰레기 정리, 남은 선물·간식 나누기'}
+];
+var Q=[
+ ['한강은 바다로 이어진다.','O','서해로 흘러가요.'],
+ ['펭귄은 하늘을 날 수 있다.','X','대신 헤엄을 아주 잘 쳐요.'],
+ ['문어의 다리는 8개다.','O',''],
+ ['무지개는 5가지 색깔이다.','X','7가지예요.'],
+ ['거미는 곤충이다.','X','다리가 8개라 곤충이 아니에요.'],
+ ['1년은 12달이다.','O',''],
+ ['고래는 물고기다.','X','새끼에게 젖을 먹이는 포유류예요.'],
+ ['개미의 다리는 6개다.','O',''],
+ ['달은 스스로 빛을 낸다.','X','햇빛을 받아 빛나요.'],
+ ['낙엽이 빨갛게 물드는 계절은 가을이다.','O',''],
+ ['한강에는 다리가 10개보다 많다.','O','30개가 넘어요.'],
+ ['개구리는 알에서 태어난다.','O','올챙이를 거쳐 개구리가 돼요.'],
+ ['1시간은 100분이다.','X','60분이에요.'],
+ ['아기는 어른보다 뼈가 더 많다.','O','자라면서 뼈가 붙어서 줄어요.'],
+ ['김치는 일본 음식이다.','X','우리나라 음식이에요.']
+];
+var KEY='hangang-host-v1', st={i:0,q:0,show:false};
+try{var sv=JSON.parse(localStorage.getItem(KEY)||'null'); if(sv&&typeof sv.i==='number') st=sv;}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+var $=function(id){return document.getElementById(id)};
+function esc(x){return String(x).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})}
+
+var bar=$('bar'); S.forEach(function(){bar.appendChild(document.createElement('i'))});
+
+function render(){
+  var s=S[st.i], el=$('now');
+  el.className='now anim kind-'+(s.kind==='quiz'?'game':s.kind);
+  var pillCls=s.kind==='break'?'pill break':(s.kind==='meal'?'pill meal':'pill');
+  var h='<div class="meta"><span class="'+pillCls+'">'+esc(s.tag)+'</span><span class="time">'+s.t+'</span></div>'+
+        '<h1>'+esc(s.title)+'</h1>';
+  if(s.say) h+='<div class="say">'+esc(s.say)+'</div>';
+  if(s.steps) h+='<ol class="steps">'+s.steps.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol>';
+  if(s.kind==='quiz'){
+    var q=Q[st.q];
+    h+='<div class="quiz"><span class="qnum">문제 '+(st.q+1)+' / '+Q.length+'</span><div class="qtext">'+esc(q[0])+'</div>'+
+       '<div class="qans">'+(st.show?'<b>'+q[1]+'</b>'+esc(q[2]):'')+'</div>'+
+       '<div class="qrow"><button class="qbtn" type="button" data-q="-1">이전 문제</button><button class="qbtn main" type="button" data-q="show">'+(st.show?'다음 문제':'정답 보기')+'</button></div></div>';
+  }
+  if(s.todo) h+='<div class="todo"><b>엄마 할 일 · </b>'+esc(s.todo)+'</div>';
+  el.innerHTML=h;
+  void el.offsetWidth;
+  var n=S[st.i+1];
+  $('next').innerHTML=n?'<span>다음 '+n.t+'</span><b>'+esc(n.title)+'</b>':'<span>끝</span><b>오늘 진행 완료!</b>';
+  [].forEach.call(bar.children,function(b,k){b.className=k<st.i?'done':(k===st.i?'cur':'')});
+  $('prev').disabled=st.i===0; $('go').disabled=st.i===S.length-1;
+  $('go').textContent=st.i===S.length-1?'끝':'다음 순서 →';
+  var tb=$('timer'); tb.hidden=!(s.kind==='break'||s.kind==='game'||s.kind==='quiz');
+  save();
+}
+$('now').addEventListener('click',function(e){
+  var b=e.target.closest('[data-q]'); if(!b) return;
+  if(b.dataset.q==='show'){ if(st.show){ st.q=Math.min(Q.length-1,st.q+1); st.show=false; } else st.show=true; }
+  else { st.q=Math.max(0,st.q-1); st.show=false; }
+  render();
+});
+function move(d){ st.i=Math.max(0,Math.min(S.length-1,st.i+d)); resetTimer(); render(); window.scrollTo({top:0,behavior:'smooth'}); }
+$('prev').addEventListener('click',function(){move(-1)});
+$('go').addEventListener('click',function(){move(1)});
+
+function mins(t){var p=t.split(':');return +p[0]*60+ +p[1];}
+$('sync').addEventListener('click',function(){
+  var d=new Date(), m=d.getHours()*60+d.getMinutes(), k=0;
+  S.forEach(function(s,idx){ if(mins(s.t)<=m) k=idx; });
+  st.i=k; resetTimer(); render();
+});
+
+// timer
+var left=600, tick=null;
+function fmt(sec){var a=Math.abs(sec);return (sec<0?'+':'')+String(Math.floor(a/60)).padStart(2,'0')+':'+String(a%60).padStart(2,'0');}
+function paint(){ $('tval').textContent=fmt(left); $('timer').classList.toggle('over',left<0); }
+function resetTimer(){ clearInterval(tick); tick=null; left=600; $('tstart').textContent='10분 시작'; paint(); }
+$('tstart').addEventListener('click',function(){
+  if(tick){ clearInterval(tick); tick=null; this.textContent='계속'; return; }
+  this.textContent='일시정지';
+  tick=setInterval(function(){ left--; paint(); },1000);
+});
+$('treset').addEventListener('click',resetTimer);
+
+function clock(){var d=new Date();$('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+clock(); setInterval(clock,15000);
+
+try{ if(navigator.wakeLock) navigator.wakeLock.request('screen').catch(function(){}); }catch(e){}
+paint(); render();
+})();
+</script>
+</body>
+</html>
