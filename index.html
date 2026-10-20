@@ -4,19 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>한강 놀이 프로그램북</title>
+<meta name="description" content="10/24(토) 잠원지구 한강놀이터 엄마·아이 모임 일정, 게임 규칙, 준비물">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://hangang-game-day.vercel.app/">
-<meta property="og:title" content="한강 놀이 프로그램북">
-<meta property="og:description" content="엄마는 신호만, 아이들은 신나게! 게임 8개 규칙과 준비물 체크리스트">
-<meta property="og:image" content="https://hangang-game-day.vercel.app/og.png">
+<meta property="og:title" content="한강 놀이 프로그램북 · 10/24(토)">
+<meta property="og:description" content="잠원지구 한강놀이터 15:30–18:30 · 게임 6개 규칙과 준비물 체크리스트">
+<meta property="og:image" content="https://hangang-game-day.vercel.app/og.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hangang-game-day.vercel.app/og.png">
+<meta name="twitter:image" content="https://hangang-game-day.vercel.app/og.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
 <style>
-/* Layout: 운동회 프로그램북 — 순서 번호가 굵게 박힌 놀이 카드가 위에서 아래로 이어지고, 스티키 칩으로 바로 이동 */
+/* Layout: 운동회 프로그램북 — 일정 타임라인 → 순서 번호가 박힌 게임 카드 → 준비물 체크리스트 */
 :root{
   --paper:#FFF6F8;
   --card:#FFFFFF;
@@ -32,38 +33,36 @@
   --font-display:"Jua","Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --font-body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
   --r-sm:8px; --r-md:16px; --r-lg:24px;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
+  :root{
     --paper:#1A1222; --card:#251B2F; --ink:#FBEFF6; --ink-soft:#C7B4D2;
     --persimmon:#FF7A5C; --persimmon-tint:#4A231C; --grass:#4FD08A; --grass-tint:#183A28;
     --plum:#D59BE6; --plum-tint:#3A2246; --line:#3C2C48; color-scheme:dark;
   }
 }
-:root[data-theme="dark"]{
-  --paper:#1A1222; --card:#251B2F; --ink:#FBEFF6; --ink-soft:#C7B4D2;
-  --persimmon:#FF7A5C; --persimmon-tint:#4A231C; --grass:#4FD08A; --grass-tint:#183A28;
-  --plum:#D59BE6; --plum-tint:#3A2246; --line:#3C2C48; color-scheme:dark;
-}
 *{box-sizing:border-box}
-body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.65;
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.65;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+img,svg{max-width:100%}
 .wrap{max-width:720px;margin:0 auto}
 h1,h2,h3{font-family:var(--font-display);font-weight:400;text-wrap:balance;margin:0;line-height:1.2}
 
-/* HERO */
 .hero{padding-block:32px 24px;display:grid;gap:16px}
 .eyebrow{font-family:var(--font-display);color:var(--persimmon);letter-spacing:.08em;font-size:15px}
 .hero h1{font-size:clamp(40px,11vw,72px);letter-spacing:-.01em}
 .hero h1 em{font-style:normal;color:var(--grass)}
 .hero p{margin:0;color:var(--ink-soft);max-width:34em}
 .scene{width:100%;max-width:100%;height:auto;display:block;border-radius:var(--r-lg)}
+.when{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;padding:16px 24px;background:var(--card);border:2px solid var(--ink);border-radius:var(--r-md)}
+.when dt{font-family:var(--font-display);color:var(--persimmon)}
+.when dd{margin:0;font-family:var(--font-display);font-size:18px}
 .facts{display:flex;flex-wrap:wrap;gap:8px}
 .fact{font-family:var(--font-display);font-size:15px;padding:8px 16px;border-radius:999px;background:var(--card);border:2px solid var(--ink)}
 .fact b{font-weight:400;color:var(--persimmon)}
 
-/* STICKY NAV */
 .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:8px;
   margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
 .nav-inner{max-width:720px;margin:0 auto;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
@@ -71,25 +70,35 @@ h1,h2,h3{font-family:var(--font-display);font-weight:400;text-wrap:balance;margi
 .chip{flex:none;font-family:var(--font-display);font-size:15px;color:var(--ink);text-decoration:none;padding:8px 16px;border-radius:999px;border:2px solid var(--line);background:var(--card);transition:transform .15s ease,opacity .15s}
 .chip:hover{transform:translateY(-2px);border-color:var(--persimmon)}
 .chip:active{transform:translateY(0) scale(.97)}
-.chip:focus-visible,.btn:focus-visible,.check input:focus-visible+span,summary:focus-visible{outline:3px solid var(--plum);outline-offset:2px}
+.chip:focus-visible,.btn:focus-visible,summary:focus-visible{outline:3px solid var(--plum);outline-offset:2px}
 
-section{padding-top:40px}
+section{padding-top:40px;scroll-margin-top:64px}
 .sec-title{font-size:32px;margin-bottom:16px}
 .sec-sub{color:var(--ink-soft);margin:-8px 0 16px}
 
-/* MOM ROLE */
+/* TIMELINE */
+.timeline{display:grid;gap:0;border-left:3px solid var(--ink);margin-left:8px}
+.tl{display:grid;grid-template-columns:72px 1fr;gap:16px;padding:12px 0 12px 20px;position:relative}
+.tl::before{content:"";position:absolute;left:-10px;top:20px;width:17px;height:17px;border-radius:50%;background:var(--paper);border:3px solid var(--ink)}
+.tl.games::before{background:var(--persimmon);border-color:var(--persimmon)}
+.tl.meal::before{background:var(--grass);border-color:var(--grass)}
+.tl time{font-family:var(--font-display);font-size:20px;font-variant-numeric:tabular-nums}
+.tl b{font-family:var(--font-display);font-weight:400;font-size:20px;display:block}
+.tl span{color:var(--ink-soft);font-size:15px}
+.mini{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.mini a{font-size:14px;padding:4px 10px;border-radius:999px;background:var(--persimmon-tint);color:var(--ink);text-decoration:none}
+.mini a:hover{background:var(--persimmon);color:var(--paper)}
+
 .roles{display:grid;gap:8px;counter-reset:r}
 .role{display:grid;grid-template-columns:48px 1fr;gap:16px;align-items:start;padding:16px;background:var(--grass-tint);border-radius:var(--r-md)}
 .role::before{counter-increment:r;content:counter(r);font-family:var(--font-display);font-size:32px;line-height:48px;text-align:center;background:var(--grass);color:var(--paper);border-radius:50%;width:48px;height:48px}
 .role b{font-family:var(--font-display);font-weight:400;font-size:20px;display:block}
 .role span{color:var(--ink-soft)}
 
-/* TEAM BOX */
 .callout{border:2px dashed var(--plum);border-radius:var(--r-md);padding:16px 24px;background:var(--plum-tint)}
 .callout h3{font-size:22px;color:var(--plum);margin-bottom:8px}
-.callout ul{margin:0;padding-left:20px}
+.callout ol,.callout ul{margin:0;padding-left:20px}
 
-/* GAME CARD */
 .games{display:grid;gap:24px}
 .game{background:var(--card);border:2px solid var(--ink);border-radius:var(--r-lg);overflow:hidden;scroll-margin-top:72px}
 .game-head{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;padding:24px 24px 16px}
@@ -98,7 +107,6 @@ section{padding-top:40px}
 .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .tag{font-size:13px;padding:4px 12px;border-radius:999px;background:var(--paper);border:1px solid var(--line);color:var(--ink-soft)}
 .tag.team{background:var(--persimmon-tint);border-color:transparent;color:var(--ink)}
-.tag.all{background:var(--grass-tint);border-color:transparent;color:var(--ink)}
 .tag.solo{background:var(--plum-tint);border-color:transparent;color:var(--ink)}
 .game-body{padding:0 24px 24px;display:grid;gap:16px}
 .row{display:grid;gap:4px}
@@ -110,22 +118,24 @@ section{padding-top:40px}
 .tip b{font-family:var(--font-display);font-weight:400;color:var(--persimmon)}
 .game.finale{border-color:var(--persimmon);border-width:3px}
 .game.finale .game-head{background:var(--persimmon-tint)}
+.break{display:flex;align-items:center;gap:12px;color:var(--ink-soft);font-size:14px;margin:-8px 0}
+.break::before,.break::after{content:"";flex:1;border-top:2px dotted var(--line)}
 
 details{border-top:1px solid var(--line);padding-top:12px}
 summary{font-family:var(--font-display);font-size:17px;cursor:pointer;color:var(--plum);list-style:none;display:flex;align-items:center;gap:8px}
 summary::-webkit-details-marker{display:none}
 summary::before{content:"+";display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--plum-tint);transition:transform .2s ease}
 details[open] summary::before{transform:rotate(45deg)}
-.levels{display:grid;gap:12px;margin-top:12px}
-.level{padding:12px 16px;border-radius:var(--r-sm);background:var(--paper)}
-.level b{font-family:var(--font-display);font-weight:400;display:block}
-.level span{color:var(--ink-soft);font-size:15px}
+.quiz{margin:12px 0 0;padding-left:22px;display:grid;gap:6px}
+.quiz em{font-style:normal;font-family:var(--font-display);color:var(--grass)}
 
-/* CHECKLIST */
+.checkgroup{display:grid;gap:8px;margin-bottom:24px}
+.checkgroup h3{font-size:20px;color:var(--plum)}
 .checklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:8px}
-.check{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:center;padding:12px 16px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:transform .15s ease}
+.check{position:relative;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:center;padding:12px 16px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:transform .15s ease}
 .check:hover{transform:translateX(2px)}
 .check input{position:absolute;opacity:0;pointer-events:none}
+.check input:focus-visible ~ .box{outline:3px solid var(--plum);outline-offset:2px}
 .check .box{width:28px;height:28px;border-radius:8px;border:2px solid var(--ink);display:grid;place-items:center;transition:background .15s}
 .check .box::after{content:"";width:12px;height:7px;border-left:3px solid var(--paper);border-bottom:3px solid var(--paper);transform:rotate(-45deg) translateY(-2px) scale(0);transition:transform .15s ease}
 .check input:checked ~ .box{background:var(--grass);border-color:var(--grass)}
@@ -134,10 +144,14 @@ details[open] summary::before{transform:rotate(45deg)}
 .txt small{display:block;color:var(--ink-soft);font-size:13px}
 .progress{font-family:var(--font-display);color:var(--grass);margin-bottom:12px}
 
-.extras{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
-.extra{padding:16px;border-radius:var(--r-md);background:var(--card);border:1px solid var(--line)}
-.extra h3{font-size:20px;margin-bottom:4px}
-.extra p{margin:0;color:var(--ink-soft);font-size:15px}
+.spend{display:grid;gap:8px}
+.spend div{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm)}
+.spend b{font-family:var(--font-display);font-weight:400;color:var(--persimmon)}
+
+.extras{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:8px}
+.extra{padding:12px 16px;border-radius:var(--r-md);background:var(--card);border:1px solid var(--line)}
+.extra h3{font-size:18px}
+.extra p{margin:0;color:var(--ink-soft);font-size:14px}
 
 .share{margin-top:40px;display:grid;gap:12px;justify-items:start}
 .btn{font-family:var(--font-display);font-size:18px;padding:12px 24px;border-radius:999px;border:0;background:var(--ink);color:var(--paper);cursor:pointer;transition:transform .15s ease,opacity .15s}
@@ -147,17 +161,19 @@ details[open] summary::before{transform:rotate(45deg)}
 footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
 
 @media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
-@media (max-width:420px){.game-head{padding:16px 16px 12px}.game-body{padding:0 16px 16px}.num{font-size:48px;min-width:40px}.game h3{font-size:24px}}
+@media (max-width:420px){.game-head{padding:16px 16px 12px}.game-body{padding:0 16px 16px}.num{font-size:48px;min-width:40px}.game h3{font-size:24px}.tl{grid-template-columns:56px 1fr;gap:12px}.tl time{font-size:17px}}
 </style>
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 </head>
 <body>
-
 <div class="wrap">
   <header class="hero">
     <div class="eyebrow">엄마들 공유용 · 놀이 진행 안내</div>
     <h1>한강 <em>놀이</em> 프로그램북</h1>
-    <p>엄마들은 돗자리에서 신호만 주고, 아이들은 자기들끼리 신나게 노는 1시간 30분. 게임마다 규칙과 엄마가 할 일을 정리했어요.</p>
+    <p>엄마들은 신호만 주고, 아이들은 신나게. 일정과 게임 규칙, 준비물을 한곳에 모았어요.</p>
+    <dl class="when">
+      <dt>일시</dt><dd>10/24 (토) 15:30 – 18:30</dd>
+      <dt>장소</dt><dd>잠원지구 한강놀이터</dd>
+    </dl>
     <svg class="scene" viewBox="0 0 680 200" role="img" aria-label="한강 잔디밭 돗자리와 공을 든 아이들 그림">
       <rect width="680" height="200" fill="var(--grass-tint)"/>
       <path d="M0 70 Q170 50 340 68 T680 60 L680 98 Q500 108 340 96 T0 102Z" fill="var(--plum-tint)"/>
@@ -181,171 +197,192 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
     <div class="facts">
       <span class="fact">아이 <b>7·9·10살</b></span>
       <span class="fact">모두 <b>11명</b></span>
-      <span class="fact">약 <b>1시간 30분</b></span>
-      <span class="fact">게임 <b>8개</b></span>
+      <span class="fact">게임 <b>6개</b></span>
+      <span class="fact">저녁 <b>한솥도시락</b></span>
     </div>
   </header>
 
-  <nav class="nav" aria-label="게임 바로가기">
+  <nav class="nav" aria-label="바로가기">
     <div class="nav-inner">
+      <a class="chip" href="#schedule">일정</a>
       <a class="chip" href="#mom">엄마 역할</a>
-      <a class="chip" href="#g1">1 기차</a>
-      <a class="chip" href="#g2">2 얼음땡</a>
-      <a class="chip" href="#g3">3 탁구공</a>
-      <a class="chip" href="#g4">4 수건돌리기</a>
-      <a class="chip" href="#g5">5 몸으로</a>
-      <a class="chip" href="#g6">6 무궁화꽃</a>
-      <a class="chip" href="#g7">7 뽑기</a>
-      <a class="chip" href="#g8">8 박 터트리기</a>
+      <a class="chip" href="#g1">1 꼬리잡기</a>
+      <a class="chip" href="#g2">2 수건돌리기</a>
+      <a class="chip" href="#g3">3 과자따먹기</a>
+      <a class="chip" href="#g4">4 신발던지기</a>
+      <a class="chip" href="#g5">5 보물찾기</a>
+      <a class="chip" href="#g6">6 OX퀴즈</a>
       <a class="chip" href="#prep">준비물</a>
     </div>
   </nav>
 
+  <section id="schedule">
+    <h2 class="sec-title">일정</h2>
+    <div class="timeline">
+      <div class="tl"><time>15:30</time><div><b>집합</b><span>잠원지구 한강놀이터에서 만나요. 돗자리 펴고 자리 잡기.</span></div></div>
+      <div class="tl"><time>15:45</time><div><b>팀 나누기 · 팀 시트지 부착</b><span>손바닥 뒤집기로 편을 나누고, 팀 색깔 시트지를 옷에 붙여요.</span></div></div>
+      <div class="tl games"><time>15:55~</time><div><b>게임 6종목</b><span>한 종목 끝날 때마다 약 10분 쉬어요. 다음 게임 준비 시간이에요.</span>
+        <div class="mini"><a href="#g1">꼬리잡기 가위바위보</a><a href="#g2">수건돌리기</a><a href="#g3">과자따먹기</a><a href="#g4">신발 멀리던지기</a><a href="#g5">보물찾기</a><a href="#g6">OX 퀴즈</a></div></div></div>
+      <div class="tl meal"><time>18:00</time><div><b>저녁식사</b><span>쿠팡이츠 주문 (한솥도시락)</span></div></div>
+      <div class="tl"><time>18:30</time><div><b>자유롭게 해산 및 마무리</b><span>쓰레기 정리하고 인사해요.</span></div></div>
+    </div>
+  </section>
+
   <section id="mom">
-    <h2 class="sec-title">엄마들 할 일은 딱 3가지</h2>
+    <h2 class="sec-title">엄마들 할 일</h2>
     <div class="roles">
-      <div class="role"><div><b>10살 아이를 "대장"으로 정하기</b><span>술래 정하기, 심판, 순서 정리는 대장이 맡아요. 대장은 게임마다 돌아가며 맡아도 좋아요.</span></div></div>
-      <div class="role"><div><b>시작 신호와 간식 타임 알리기</b><span>"다음 게임!" 한마디면 충분해요. 돗자리에서 사진 찍으며 지켜봐 주세요.</span></div></div>
-      <div class="role"><div><b>마지막 뽑기와 박 터트리기만 함께하기</b><span>준비가 필요한 두 게임만 엄마들이 같이 진행하고 즐겨요.</span></div></div>
+      <div class="role"><div><b>10살 아이를 "대장"으로 정하기</b><span>순서 정리, 심판은 대장이 맡아요. 게임마다 돌아가며 맡아도 좋아요.</span></div></div>
+      <div class="role"><div><b>쉬는 10분 동안 다음 게임 준비</b><span>과자 줄 매달기, 보물 숨기기처럼 준비가 필요한 게임만 미리 세팅해요.</span></div></div>
+      <div class="role"><div><b>시작 신호 · 퀴즈 진행</b><span>"다음 게임!" 신호를 주고, OX 퀴즈는 엄마 한 분이 문제를 읽어 주세요.</span></div></div>
     </div>
   </section>
 
   <section>
     <div class="callout">
-      <h3>11명 팀 나누기</h3>
-      <ul>
-        <li>팀전은 게임마다 <b>가위바위보</b>로 즉석에서 5 대 5로 나눠요.</li>
-        <li>남는 1명은 그 게임의 <b>심판</b>을 맡고, 다음 게임에서 다른 아이와 바꿔요.</li>
-        <li>한 팀에 7·9·10살이 골고루 섞이게 해 주세요.</li>
-      </ul>
+      <h3>팀 나누기 · 손바닥 뒤집기</h3>
+      <ol>
+        <li>모두 "손바닥 뒤집기!"를 외치며 손바닥 또는 손등을 내밀어요.</li>
+        <li>손바닥 팀과 손등 팀으로 나눠요. 인원이 안 맞으면 많은 쪽만 다시 해요.</li>
+        <li>팀 색깔 시트지를 옷에 붙여요.</li>
+      </ol>
+      <p style="margin:8px 0 0">11명이라 한 팀이 1명 더 많아요. 적은 팀에 엄마 1명이 들어가거나, 남는 1명이 게임마다 심판을 맡아요.</p>
     </div>
   </section>
 
   <section>
-    <h2 class="sec-title">진행 순서</h2>
-    <p class="sec-sub">위에서부터 차례대로 진행해요. 아이들 컨디션에 따라 빼거나 늘려도 괜찮아요.</p>
+    <h2 class="sec-title">게임 6종목</h2>
+    <p class="sec-sub">팀전 3개, 개인전 3개예요. 게임 사이 10분은 휴식 겸 준비 시간이에요.</p>
     <div class="games">
 
       <article class="game" id="g1">
-        <div class="game-head"><div class="num">1</div><div><h3>가위바위보 기차</h3>
-          <div class="tags"><span class="tag all">전체</span><span class="tag">5분</span><span class="tag">준비물 없음</span></div></div></div>
+        <div class="game-head"><div class="num">1</div><div><h3>꼬리잡기 가위바위보</h3>
+          <div class="tags"><span class="tag team">팀전</span><span class="tag">준비물 없음</span></div></div></div>
         <div class="game-body">
           <div class="row"><span class="label">이렇게 놀아요</span>
-            <ol><li>모두 흩어져서 아무나 만나 가위바위보를 해요.</li><li>진 사람은 이긴 사람 뒤에 붙어 어깨를 잡아요.</li><li>맨 앞 사람끼리 다시 가위바위보! 진 줄은 이긴 줄 뒤에 통째로 붙어요.</li><li>11명이 기차 하나가 되면 끝. 맨 앞 사람이 오늘의 첫 대장이에요.</li></ol></div>
-          <div class="mom"><b>엄마</b><span>"기차 출발!" 시작 신호만 주세요.</span></div>
+            <ol><li>팀별로 앞사람 어깨나 허리를 잡고 한 줄 기차를 만들어요. 맨 앞이 머리, 맨 뒤가 꼬리예요.</li><li>두 팀 머리끼리 가위바위보!</li><li>이긴 팀 머리는 상대 팀 꼬리를 잡으러 가고, 진 팀은 줄이 끊어지지 않게 꼬리를 지켜요.</li><li>꼬리를 잡으면 1점. 줄이 끊어져도 상대 팀 1점. 3점 먼저 내는 팀이 이겨요.</li></ol></div>
+          <div class="mom"><b>엄마</b><span>"시작!" 신호와 점수만 세 주세요.</span></div>
+          <div class="tip"><b>나이 팁</b> 7살은 줄 가운데에 서면 넘어질 걱정이 적어요.</div>
         </div>
       </article>
+      <div class="break">10분 휴식</div>
 
       <article class="game" id="g2">
-        <div class="game-head"><div class="num">2</div><div><h3>얼음땡 · 경찰과 도둑</h3>
-          <div class="tags"><span class="tag all">전체</span><span class="tag">15~20분</span><span class="tag">준비물 없음</span></div></div></div>
+        <div class="game-head"><div class="num">2</div><div><h3>수건돌리기</h3>
+          <div class="tags"><span class="tag solo">개인전</span><span class="tag">수건 1장</span></div></div></div>
         <div class="game-body">
-          <div class="row"><span class="label">얼음땡</span>
-            <ol><li>술래 1~2명을 정해요.</li><li>잡힐 것 같으면 "얼음!" 하고 멈추면 안 잡혀요.</li><li>얼음이 된 친구는 다른 친구가 "땡!" 하고 쳐 줘야 다시 움직여요.</li><li>모두 얼음이 되면 술래가 이겨요.</li></ol></div>
-          <div class="row"><span class="label">경찰과 도둑</span>
-            <ol><li>경찰 4명, 도둑 7명으로 나눠요.</li><li>돗자리 옆을 감옥으로 정해요.</li><li>경찰이 도둑을 터치하면 감옥으로! 다른 도둑이 와서 터치하면 탈출해요.</li><li>도둑이 모두 잡히면 역할을 바꿔요.</li></ol></div>
-          <div class="mom"><b>엄마</b><span>뛰는 범위만 정해 주세요. "저 나무부터 저 벤치까지!"</span></div>
-          <div class="tip"><b>나이 팁</b> 7살은 처음에 술래나 경찰을 맡지 않게 해 주세요.</div>
+          <div class="row"><span class="label">이렇게 놀아요</span>
+            <ol><li>동그랗게 안쪽을 보고 앉아요.</li><li>술래가 노래를 부르며 원 바깥을 돌다가 한 친구 뒤에 몰래 수건을 놓아요.</li><li>눈치챈 친구는 수건을 들고 술래를 쫓아가요.</li><li>술래가 빈자리에 먼저 앉으면 쫓던 친구가 새 술래가 돼요.</li></ol></div>
+          <div class="mom"><b>엄마</b><span>엄마들도 원에 같이 앉으면 더 재밌어요.</span></div>
         </div>
       </article>
+      <div class="break">10분 휴식 · 과자 줄 세팅</div>
 
       <article class="game" id="g3">
-        <div class="game-head"><div class="num">3</div><div><h3>숟가락 탁구공 옮기기</h3>
-          <div class="tags"><span class="tag team">팀전</span><span class="tag">10분</span><span class="tag">탁구공 · 숟가락</span></div></div></div>
+        <div class="game-head"><div class="num">3</div><div><h3>과자따먹기</h3>
+          <div class="tags"><span class="tag team">팀전</span><span class="tag">양파링 · 줄넘기 · 빨래집게 · 끈</span></div></div></div>
         <div class="game-body">
           <div class="row"><span class="label">이렇게 놀아요</span>
-            <ol><li>두 팀이 각자 한 줄로 서고 모두 숟가락을 들어요.</li><li>맨 앞 사람 숟가락에 탁구공을 올려요.</li><li>손 대지 않고 다음 사람 숟가락으로 공을 넘겨요.</li><li>맨 끝 사람이 바구니(종이컵)에 넣으면 1점! 떨어뜨리면 맨 앞부터 다시.</li><li>3분 동안 공을 더 많이 옮긴 팀이 이겨요.</li></ol></div>
-          <div class="mom"><b>엄마</b><span>"시작!"과 "그만!" 3분 타이머만 맡아 주세요.</span></div>
-          <div class="tip"><b>나이 팁</b> 10살은 숟가락을 입에 물고, 7살은 손으로 들어요.</div>
+            <ol><li>줄넘기 줄을 가로로 걸고, 양파링을 끈에 꿰어 빨래집게로 줄에 매달아요.</li><li>팀별로 출발선에 한 줄로 서요.</li><li>"출발!" 하면 한 명씩 달려가 손을 뒤로 하고 입으로만 양파링을 따 먹어요.</li><li>먹고 돌아와 다음 친구와 손바닥을 치면 출발. 모두 먼저 끝낸 팀이 이겨요.</li></ol></div>
+          <div class="mom"><b>엄마</b><span>엄마 두 분이 줄 양끝을 잡아 주세요. 나무나 벤치에 묶으면 손이 편해요.</span></div>
+          <div class="tip"><b>나이 팁</b> 7살 차례에는 줄을 조금 낮춰 주세요. 키 차이가 커서 반응이 제일 좋은 게임이에요.</div>
         </div>
       </article>
+      <div class="break">10분 휴식</div>
 
       <article class="game" id="g4">
-        <div class="game-head"><div class="num">4</div><div><h3>간식 타임 + 수건돌리기</h3>
-          <div class="tags"><span class="tag all">전체</span><span class="tag">15분</span><span class="tag">손수건</span></div></div></div>
+        <div class="game-head"><div class="num">4</div><div><h3>신발 멀리던지기</h3>
+          <div class="tags"><span class="tag team">팀전</span><span class="tag">준비물 없음</span></div></div></div>
         <div class="game-body">
           <div class="row"><span class="label">이렇게 놀아요</span>
-            <ol><li>간식을 먹고 동그랗게 앉아요.</li><li>술래가 노래를 부르며 원 바깥을 돌다가 한 친구 뒤에 몰래 손수건을 놓아요.</li><li>눈치챈 친구는 손수건을 들고 술래를 쫓아가요.</li><li>술래가 빈자리에 먼저 앉으면 쫓던 친구가 새 술래가 돼요.</li></ol></div>
-          <div class="mom"><b>엄마</b><span>간식만 꺼내 주시면 돼요. 엄마들도 원에 같이 앉으면 더 재밌어요.</span></div>
+            <ol><li>출발선에 서서 한쪽 신발을 반쯤 벗어요.</li><li>발을 차올려 신발을 최대한 멀리 날려요.</li><li>팀에서 가장 멀리 간 신발 기록으로 겨뤄요. 두 번 해서 더 좋은 기록을 써도 돼요.</li></ol></div>
+          <div class="mom"><b>엄마</b><span>신발 떨어진 자리에 표시만 해 주세요. 사람 없는 쪽으로 차게 방향을 정해 주세요.</span></div>
+          <div class="tip"><b>안전</b> 앞에 사람이 없을 때만 차요. 양말 신은 발로 착지하니 돌·유리 조각이 없는지 먼저 봐 주세요.</div>
         </div>
       </article>
+      <div class="break">10분 휴식 · 보물 숨기기</div>
 
       <article class="game" id="g5">
-        <div class="game-head"><div class="num">5</div><div><h3>몸으로 표현해요</h3>
-          <div class="tags"><span class="tag team">팀전</span><span class="tag">15분</span><span class="tag">스케치북 · 매직</span></div></div></div>
+        <div class="game-head"><div class="num">5</div><div><h3>보물찾기</h3>
+          <div class="tags"><span class="tag solo">개인전</span><span class="tag">숫자 적힌 종이</span></div></div></div>
         <div class="game-body">
           <div class="row"><span class="label">이렇게 놀아요</span>
-            <ol><li>대장이 스케치북에 제시어를 적어 표현할 친구에게만 보여줘요.</li><li>말 없이 몸으로만 표현해요. 소리를 내면 안 돼요!</li><li>같은 팀이 1분 안에 맞히면 1점.</li><li>팀마다 돌아가며 모두 한 번씩 표현해요.</li></ol></div>
-          <div class="tip"><b>동생 보너스</b> 7살이 맞히면 2점! 형·누나들이 동생을 챙기게 돼요.</div>
+            <ol><li>쉬는 시간에 엄마들이 숫자 쪽지를 정해진 범위 안에 숨겨요.</li><li>"찾기 시작!" 하면 한 사람이 쪽지 1장씩만 찾아요.</li><li>찾은 숫자와 같은 번호의 랜덤선물을 받아요.</li></ol></div>
+          <div class="mom"><b>엄마</b><span>각 집에서 가져온 랜덤선물에 번호를 붙여 두세요. 쪽지는 아이 수보다 1~2장 더 숨기면 좋아요.</span></div>
+          <div class="tip"><b>순서 팁</b> 빨리 찾은 큰 아이가 동생 쪽지 찾기를 도와주면 보너스 박수!</div>
+        </div>
+      </article>
+      <div class="break">10분 휴식</div>
+
+      <article class="game finale" id="g6">
+        <div class="game-head"><div class="num">6</div><div><h3>OX 퀴즈</h3>
+          <div class="tags"><span class="tag solo">개인전</span><span class="tag">퀴즈 · O/X판</span></div></div></div>
+        <div class="game-body">
+          <div class="row"><span class="label">이렇게 놀아요</span>
+            <ol><li>바닥 한쪽은 O, 다른 쪽은 X 구역으로 정해요.</li><li>엄마가 문제를 읽으면 정답이라고 생각하는 쪽으로 이동해요.</li><li>틀린 친구는 응원석으로! 끝까지 남은 친구가 우승이에요.</li></ol></div>
+          <div class="mom"><b>엄마</b><span>엄마 한 분이 문제를 읽고 정답을 알려 주세요.</span></div>
           <details>
-            <summary>나이별 제시어 보기</summary>
-            <div class="levels">
-              <div class="level"><b>쉬움 · 7살</b><span>토끼, 코끼리, 원숭이, 펭귄, 뱀, 꽃게, 개구리, 닭, 양치하기, 라면 먹기, 잠자기, 수영하기</span></div>
-              <div class="level"><b>보통 · 9살</b><span>소방관, 요리사, 미용사, 경찰관, 치과의사, 사진작가, 축구, 탁구, 피겨스케이팅, 권투, 볼링</span></div>
-              <div class="level"><b>어려움 · 10살</b><span>엘리베이터에 갇힘, 아이스크림 떨어뜨림, 모기 잡기, 지각해서 달리기, 따릉이 타기, 치킨 배달 기다리기, 연 날리기, 오리배 타기</span></div>
-            </div>
+            <summary>7~10살용 예시 문제 10개</summary>
+            <ol class="quiz">
+              <li>한강은 바다로 이어진다. <em>O</em></li>
+              <li>펭귄은 하늘을 날 수 있다. <em>X</em></li>
+              <li>문어의 다리는 8개다. <em>O</em></li>
+              <li>무지개는 5가지 색깔이다. <em>X</em> (7가지)</li>
+              <li>거미는 곤충이다. <em>X</em> (다리가 8개)</li>
+              <li>1년은 12달이다. <em>O</em></li>
+              <li>고래는 물고기다. <em>X</em> (포유류)</li>
+              <li>개미의 다리는 6개다. <em>O</em></li>
+              <li>달은 스스로 빛을 낸다. <em>X</em></li>
+              <li>낙엽이 빨갛게 되는 건 가을이다. <em>O</em></li>
+            </ol>
           </details>
         </div>
       </article>
-
-      <article class="game" id="g6">
-        <div class="game-head"><div class="num">6</div><div><h3>무궁화꽃이 피었습니다</h3>
-          <div class="tags"><span class="tag all">전체</span><span class="tag">10분</span><span class="tag">준비물 없음</span></div></div></div>
-        <div class="game-body">
-          <div class="row"><span class="label">이렇게 놀아요</span>
-            <ol><li>술래는 나무를 보고 서고, 나머지는 출발선에 서요.</li><li>술래가 "무궁화꽃이 피었습니다!"를 외치는 동안만 앞으로 가요.</li><li>술래가 돌아봤을 때 움직이면 술래 손을 잡고 포로가 돼요.</li><li>누군가 술래 몰래 포로의 손을 끊으면 모두 출발선으로 도망! 술래가 터치한 사람이 다음 술래예요.</li></ol></div>
-          <div class="tip"><b>변형</b> "피었습니다" 대신 "토끼가 뛰었습니다"처럼 동작을 붙이면 더 웃겨요.</div>
-          <div class="mom"><b>엄마</b><span>할 일 없음. 사진 찍기 좋은 타이밍이에요.</span></div>
-        </div>
-      </article>
-
-      <article class="game" id="g7">
-        <div class="game-head"><div class="num">7</div><div><h3>추억의 뽑기</h3>
-          <div class="tags"><span class="tag solo">개인</span><span class="tag">10분</span><span class="tag">뽑기판 · 미니선물</span></div></div></div>
-        <div class="game-body">
-          <div class="row"><span class="label">이렇게 놀아요</span>
-            <ol><li>모은 선물을 돗자리에 쭉 펼쳐 보여줘요.</li><li>한 명씩 뽑기판을 뜯어 번호를 확인해요.</li><li>번호와 같은 선물을 가져가요.</li></ol></div>
-          <div class="mom"><b>엄마</b><span>한 집에 선물 1개(5,000원 미만)씩 가져와서 번호표를 붙여 주세요.</span></div>
-          <div class="tip"><b>순서 팁</b> 막내부터 뽑으면 서운한 아이가 줄어요. 운으로 정해지는 게임이라 나이 차이도 상관없어요.</div>
-        </div>
-      </article>
-
-      <article class="game finale" id="g8">
-        <div class="game-head"><div class="num">8</div><div><h3>박 터트리기 · 피날레</h3>
-          <div class="tags"><span class="tag all">전체</span><span class="tag">5분</span><span class="tag">콩주머니 · 박 · 개별포장 간식</span></div></div></div>
-        <div class="game-body">
-          <div class="row"><span class="label">이렇게 놀아요</span>
-            <ol><li>채반 두 개를 맞대 박을 만들고 안에 개별포장 간식을 넣어요.</li><li>나무나 벤치에 끈으로 매달아요.</li><li>"하나, 둘, 셋!"에 맞춰 모두 콩주머니를 던져요.</li><li>박이 열리면 간식이 와르르! 다 같이 주워요.</li></ol></div>
-          <div class="mom"><b>엄마</b><span>박을 손으로 들지 말고 나무에 매달면 훨씬 편해요. 카운트다운만 외쳐 주세요.</span></div>
-          <div class="tip"><b>마무리</b> 간식을 줍고 나면 단체 사진 찍고, 터진 풍선·쓰레기 줍기 미션으로 뒷정리까지!</div>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <section>
-    <h2 class="sec-title">시간이 남거나 아이들이 지루해하면</h2>
-    <div class="extras">
-      <div class="extra"><h3>풍선 다 같이 지키기</h3><p>풍선 1개를 땅에 안 떨어뜨리고 몇 번 칠 수 있는지 세요. 모두 한 팀이에요.</p></div>
-      <div class="extra"><h3>꼬리 풍선 터트리기</h3><p>엉덩이에 풍선을 달고 상대 팀 풍선을 터트려요. 바람 부는 날엔 테이프와 여분 풍선을 넉넉히.</p></div>
     </div>
   </section>
 
   <section id="prep">
-    <h2 class="sec-title">준비물 체크리스트</h2>
-    <p class="sec-sub">체크하면 이 휴대폰에만 저장돼요. 분담은 단톡방에서 정해 주세요.</p>
-    <div class="progress" id="progress">0 / 10 준비 완료</div>
-    <div class="checklist" id="checklist">
-      <label class="check"><input type="checkbox" id="c1"><span class="box"></span><span class="txt">탁구공 여러 개<small>3번 탁구공 옮기기</small></span></label>
-      <label class="check"><input type="checkbox" id="c2"><span class="box"></span><span class="txt">숟가락 11개 + 종이컵 2개<small>3번 탁구공 옮기기</small></span></label>
-      <label class="check"><input type="checkbox" id="c3"><span class="box"></span><span class="txt">손수건 1장<small>4번 수건돌리기</small></span></label>
-      <label class="check"><input type="checkbox" id="c4"><span class="box"></span><span class="txt">스케치북 + 굵은 매직<small>5번 몸으로 표현해요</small></span></label>
-      <label class="check"><input type="checkbox" id="c5"><span class="box"></span><span class="txt">뽑기판<small>7번 추억의 뽑기</small></span></label>
-      <label class="check"><input type="checkbox" id="c6"><span class="box"></span><span class="txt">미니선물 (한 집 1개, 5,000원 미만)<small>7번 추억의 뽑기</small></span></label>
-      <label class="check"><input type="checkbox" id="c7"><span class="box"></span><span class="txt">콩주머니 (각자 집에서)<small>8번 박 터트리기</small></span></label>
-      <label class="check"><input type="checkbox" id="c8"><span class="box"></span><span class="txt">채반 2개 + 매달 끈 + 테이프<small>8번 박 터트리기</small></span></label>
-      <label class="check"><input type="checkbox" id="c9"><span class="box"></span><span class="txt">개별포장 간식<small>8번 박 속에 넣기</small></span></label>
-      <label class="check"><input type="checkbox" id="c10"><span class="box"></span><span class="txt">풍선 + 쓰레기봉투<small>예비 게임 · 뒷정리</small></span></label>
+    <h2 class="sec-title">준비물</h2>
+    <p class="sec-sub">체크하면 이 휴대폰에만 저장돼요.</p>
+    <div class="progress" id="progress"></div>
+
+    <div class="checkgroup">
+      <h3>가정 준비물 (집집마다)</h3>
+      <div class="checklist">
+        <label class="check"><input type="checkbox" id="h1"><span class="box"></span><span class="txt">개인 물병</span></label>
+        <label class="check"><input type="checkbox" id="h2"><span class="box"></span><span class="txt">아이들 랜덤선물 (1만원 이내)<small>5번 보물찾기 선물</small></span></label>
+        <label class="check"><input type="checkbox" id="h3"><span class="box"></span><span class="txt">바자회 물품</span></label>
+        <label class="check"><input type="checkbox" id="h4"><span class="box"></span><span class="txt">돗자리<small>가능한 분만</small></span></label>
+      </div>
+    </div>
+
+    <div class="checkgroup">
+      <h3>게임 준비물 (공용)</h3>
+      <div class="checklist">
+        <label class="check"><input type="checkbox" id="c1"><span class="box"></span><span class="txt">색깔 시트지<small>팀 나누기</small></span></label>
+        <label class="check"><input type="checkbox" id="c2"><span class="box"></span><span class="txt">수건 1장<small>2번 수건돌리기</small></span></label>
+        <label class="check"><input type="checkbox" id="c3"><span class="box"></span><span class="txt">양파링 · 줄넘기 · 빨래집게 · 끈<small>3번 과자따먹기</small></span></label>
+        <label class="check"><input type="checkbox" id="c4"><span class="box"></span><span class="txt">숫자 적힌 종이<small>5번 보물찾기</small></span></label>
+        <label class="check"><input type="checkbox" id="c5"><span class="box"></span><span class="txt">퀴즈 문제 · O/X판<small>6번 OX 퀴즈</small></span></label>
+      </div>
+    </div>
+
+    <div class="checkgroup">
+      <h3>공용 지출</h3>
+      <div class="spend">
+        <div><b>아이들 간식</b><span>청포도 음료수 1팩, 스낵 4종 (빈츠, 참쌀설병, 구운감자, 칸쵸)</span></div>
+        <div><b>엄마들 음료</b><span>쿠팡이츠 주문</span></div>
+        <div><b>저녁식사</b><span>쿠팡이츠 주문 (한솥도시락)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title">시간이 남으면</h2>
+    <p class="sec-sub">준비물 없이 바로 할 수 있는 예비 게임이에요.</p>
+    <div class="extras">
+      <div class="extra"><h3>무궁화꽃이 피었습니다</h3><p>술래가 진행까지 맡아요.</p></div>
+      <div class="extra"><h3>얼음땡</h3><p>뛰는 범위만 정해 주세요.</p></div>
+      <div class="extra"><h3>몸으로 표현해요</h3><p>동물·직업을 몸짓으로 맞혀요.</p></div>
     </div>
   </section>
 
@@ -359,8 +396,8 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
 
 <script>
 (function(){
-  var boxes=[].slice.call(document.querySelectorAll('#checklist input'));
-  var key='hangang-prep-v1', saved={};
+  var boxes=[].slice.call(document.querySelectorAll('.checklist input'));
+  var key='hangang-prep-v2', saved={};
   try{saved=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){}
   function update(){
     var n=boxes.filter(function(b){return b.checked}).length;
