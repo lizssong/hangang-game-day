@@ -160,6 +160,24 @@ details[open] summary::before{transform:rotate(45deg)}
 .toast{font-size:14px;color:var(--grass);min-height:1.4em}
 footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
 
+.variant{padding:12px 16px;border-radius:var(--r-sm);border:2px dashed var(--plum);background:var(--plum-tint);display:grid;gap:8px}
+.variant>b{font-family:var(--font-display);font-weight:400;color:var(--plum)}
+.variant ul{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.variant a{color:var(--ink);font-family:var(--font-display);text-decoration:none;border-bottom:2px solid var(--plum)}
+.variant a:hover{color:var(--plum)}
+.variant a:focus-visible{outline:3px solid var(--plum);outline-offset:2px}
+.variant span{color:var(--ink-soft);font-size:15px}
+.alts{display:grid;gap:12px}
+.alt{background:var(--card);border:2px solid var(--line);border-radius:var(--r-md);padding:16px 20px;scroll-margin-top:72px;transition:border-color .2s}
+.alt:target{border-color:var(--plum)}
+.alt-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px}
+.alt h3{font-size:22px}
+.from{font-size:13px;padding:2px 10px;border-radius:999px;background:var(--plum-tint);color:var(--ink)}
+.alt>p{margin:4px 0 0;color:var(--ink-soft);font-size:15px}
+.alt details{margin-top:12px}
+.alt ol{margin:8px 0 0;padding-left:22px;display:grid;gap:4px}
+.alt .need{margin-top:8px;font-size:14px;color:var(--ink-soft)}
+.alt .need b{font-family:var(--font-display);font-weight:400;color:var(--persimmon)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
 @media (max-width:420px){.game-head{padding:16px 16px 12px}.game-body{padding:0 16px 16px}.num{font-size:48px;min-width:40px}.game h3{font-size:24px}.tl{grid-template-columns:56px 1fr;gap:12px}.tl time{font-size:17px}}
 </style>
@@ -213,6 +231,7 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
       <a class="chip" href="#g5">5 보물찾기</a>
       <a class="chip" href="#g6">6 OX퀴즈</a>
       <a class="chip" href="#prep">준비물</a>
+      <a class="chip" href="#more">확장 게임</a>
     </div>
   </nav>
 
@@ -262,6 +281,7 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
             <ol><li>팀별로 앞사람 어깨나 허리를 잡고 한 줄 기차를 만들어요. 맨 앞이 머리, 맨 뒤가 꼬리예요.</li><li>두 팀 머리끼리 가위바위보!</li><li>이긴 팀 머리는 상대 팀 꼬리를 잡으러 가고, 진 팀은 줄이 끊어지지 않게 꼬리를 지켜요.</li><li>꼬리를 잡으면 1점. 줄이 끊어져도 상대 팀 1점. 3점 먼저 내는 팀이 이겨요.</li></ol></div>
           <div class="mom"><b>엄마</b><span>"시작!" 신호와 점수만 세 주세요.</span></div>
           <div class="tip"><b>나이 팁</b> 7살은 줄 가운데에 서면 넘어질 걱정이 적어요.</div>
+          <div class="variant"><b>이런 버전도 가능</b><ul><li><a href="#a1">가위바위보 기차</a> <span>팀 없이 모두가 한 줄이 될 때까지. 몸풀기 첫 게임으로 좋아요.</span></li><li><a href="#a2">꼬리 풍선 터트리기</a> <span>꼬리 대신 엉덩이에 풍선을 달고 터트리기.</span></li></ul></div>
         </div>
       </article>
       <div class="break">10분 휴식</div>
@@ -273,6 +293,7 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
           <div class="row"><span class="label">이렇게 놀아요</span>
             <ol><li>동그랗게 안쪽을 보고 앉아요.</li><li>술래가 노래를 부르며 원 바깥을 돌다가 한 친구 뒤에 몰래 수건을 놓아요.</li><li>눈치챈 친구는 수건을 들고 술래를 쫓아가요.</li><li>술래가 빈자리에 먼저 앉으면 쫓던 친구가 새 술래가 돼요.</li></ol></div>
           <div class="mom"><b>엄마</b><span>엄마들도 원에 같이 앉으면 더 재밌어요.</span></div>
+          <div class="variant"><b>이런 버전도 가능</b><ul><li><a href="#a8">술래 놀이 3종</a> <span>무궁화꽃·얼음땡·경찰과 도둑처럼 술래가 있는 놀이로 바꿔도 돼요.</span></li></ul></div>
         </div>
       </article>
       <div class="break">10분 휴식 · 과자 줄 세팅</div>
@@ -285,6 +306,7 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
             <ol><li>줄넘기 줄을 가로로 걸고, 양파링을 끈에 꿰어 빨래집게로 줄에 매달아요.</li><li>팀별로 출발선에 한 줄로 서요.</li><li>"출발!" 하면 한 명씩 달려가 손을 뒤로 하고 입으로만 양파링을 따 먹어요.</li><li>먹고 돌아와 다음 친구와 손바닥을 치면 출발. 모두 먼저 끝낸 팀이 이겨요.</li></ol></div>
           <div class="mom"><b>엄마</b><span>엄마 두 분이 줄 양끝을 잡아 주세요. 나무나 벤치에 묶으면 손이 편해요.</span></div>
           <div class="tip"><b>나이 팁</b> 7살 차례에는 줄을 조금 낮춰 주세요. 키 차이가 커서 반응이 제일 좋은 게임이에요.</div>
+          <div class="variant"><b>이런 버전도 가능</b><ul><li><a href="#a3">숟가락 탁구공 옮기기</a> <span>입 대신 숟가락으로 공을 옮기는 팀 릴레이.</span></li><li><a href="#a9">풍선 다 같이 지키기</a> <span>경쟁 대신 모두 한 팀으로 하는 협동 버전.</span></li></ul></div>
         </div>
       </article>
       <div class="break">10분 휴식</div>
@@ -297,6 +319,7 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
             <ol><li>출발선에 서서 한쪽 신발을 반쯤 벗어요.</li><li>발을 차올려 신발을 최대한 멀리 날려요.</li><li>팀에서 가장 멀리 간 신발 기록으로 겨뤄요. 두 번 해서 더 좋은 기록을 써도 돼요.</li></ol></div>
           <div class="mom"><b>엄마</b><span>신발 떨어진 자리에 표시만 해 주세요. 사람 없는 쪽으로 차게 방향을 정해 주세요.</span></div>
           <div class="tip"><b>안전</b> 앞에 사람이 없을 때만 차요. 양말 신은 발로 착지하니 돌·유리 조각이 없는지 먼저 봐 주세요.</div>
+          <div class="variant"><b>이런 버전도 가능</b><ul><li><a href="#a4">신발 과녁 던지기</a> <span>멀리 대신 훌라후프·돗자리 과녁에 정확하게.</span></li><li><a href="#a6">박 터트리기</a> <span>신발 대신 콩주머니를 던져 간식 박을 터트리기.</span></li></ul></div>
         </div>
       </article>
       <div class="break">10분 휴식 · 보물 숨기기</div>
@@ -309,6 +332,7 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
             <ol><li>쉬는 시간에 엄마들이 숫자 쪽지를 정해진 범위 안에 숨겨요.</li><li>"찾기 시작!" 하면 한 사람이 쪽지 1장씩만 찾아요.</li><li>찾은 숫자와 같은 번호의 랜덤선물을 받아요.</li></ol></div>
           <div class="mom"><b>엄마</b><span>각 집에서 가져온 랜덤선물에 번호를 붙여 두세요. 쪽지는 아이 수보다 1~2장 더 숨기면 좋아요.</span></div>
           <div class="tip"><b>순서 팁</b> 빨리 찾은 큰 아이가 동생 쪽지 찾기를 도와주면 보너스 박수!</div>
+          <div class="variant"><b>이런 버전도 가능</b><ul><li><a href="#a5">추억의 뽑기</a> <span>쪽지 찾기 대신 뽑기판으로 선물 번호 정하기.</span></li><li><a href="#a6">박 터트리기</a> <span>선물 대신 간식을 박 속에 넣어 피날레로.</span></li></ul></div>
         </div>
       </article>
       <div class="break">10분 휴식</div>
@@ -335,6 +359,7 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
               <li>낙엽이 빨갛게 되는 건 가을이다. <em>O</em></li>
             </ol>
           </details>
+          <div class="variant"><b>이런 버전도 가능</b><ul><li><a href="#a7">몸으로 표현해요</a> <span>문제를 읽는 대신 몸짓으로 설명하고 팀이 맞히기.</span></li></ul></div>
         </div>
       </article>
     </div>
@@ -376,13 +401,47 @@ footer{margin-top:40px;color:var(--ink-soft);font-size:14px}
     </div>
   </section>
 
-  <section>
-    <h2 class="sec-title">시간이 남으면</h2>
-    <p class="sec-sub">준비물 없이 바로 할 수 있는 예비 게임이에요.</p>
-    <div class="extras">
-      <div class="extra"><h3>무궁화꽃이 피었습니다</h3><p>술래가 진행까지 맡아요.</p></div>
-      <div class="extra"><h3>얼음땡</h3><p>뛰는 범위만 정해 주세요.</p></div>
-      <div class="extra"><h3>몸으로 표현해요</h3><p>동물·직업을 몸짓으로 맞혀요.</p></div>
+  <section id="more">
+    <h2 class="sec-title">다른 버전으로 추가할 수 있는 게임</h2>
+    <p class="sec-sub">처음에 함께 구상했던 게임이에요. 시간이 남거나, 아이들이 한 게임을 더 하고 싶어 할 때 바꿔 끼워 쓰세요.</p>
+    <div class="alts">
+      <article class="alt" id="a1"><div class="alt-head"><h3>가위바위보 기차</h3><span class="from">꼬리잡기 가위바위보 변형</span></div>
+        <p>팀 없이 전체가 함께, 준비물 없이 5분.</p>
+        <details><summary>규칙 보기</summary><ol><li>흩어져서 아무나 만나 가위바위보.</li><li>진 사람은 이긴 사람 뒤에 붙어 어깨를 잡아요.</li><li>맨 앞 사람끼리 다시 가위바위보! 진 줄은 이긴 줄 뒤에 통째로 붙어요.</li><li>11명이 기차 하나가 되면 끝. 맨 앞 사람이 오늘의 대장!</li></ol></details></article>
+
+      <article class="alt" id="a2"><div class="alt-head"><h3>꼬리 풍선 터트리기</h3><span class="from">꼬리잡기 가위바위보 변형</span></div>
+        <p>팀전. 두 가지 색 풍선으로 팀을 구분해요.</p>
+        <details><summary>규칙 보기</summary><ol><li>팀 색깔 풍선을 끈으로 허리 뒤에 달아요.</li><li>"시작!" 하면 상대 팀 풍선을 손으로 터트려요.</li><li>풍선이 다 터진 팀이 져요.</li></ol><p class="need"><b>준비물</b> 두 가지 색 풍선, 끈, 테이프 · 바람 불면 날아가니 여분을 넉넉히</p></details></article>
+
+      <article class="alt" id="a3"><div class="alt-head"><h3>숟가락 탁구공 옮기기</h3><span class="from">과자따먹기 변형</span></div>
+        <p>팀 릴레이. 엄마는 3분 타이머만 맡으면 돼요.</p>
+        <details><summary>규칙 보기</summary><ol><li>팀별로 한 줄로 서서 모두 숟가락을 들어요.</li><li>손 대지 않고 다음 사람 숟가락으로 탁구공을 넘겨요.</li><li>맨 끝 사람이 종이컵에 넣으면 1점, 떨어뜨리면 맨 앞부터 다시.</li><li>3분 동안 더 많이 옮긴 팀이 이겨요.</li></ol><p class="need"><b>준비물</b> 탁구공 여러 개, 숟가락 11개, 종이컵 2개 · 10살은 숟가락을 입에 물고, 7살은 손으로</p></details></article>
+
+      <article class="alt" id="a4"><div class="alt-head"><h3>신발 과녁 던지기</h3><span class="from">신발 멀리던지기 변형</span></div>
+        <p>멀리 대신 정확하게. 7살도 이길 수 있어요.</p>
+        <details><summary>규칙 보기</summary><ol><li>훌라후프나 돗자리를 과녁으로 놓아요.</li><li>출발선에서 신발을 툭 차서 과녁 안에 넣어요.</li><li>들어가면 1점, 팀 점수를 합해요.</li></ol><p class="need"><b>준비물</b> 훌라후프 또는 돗자리 · 7살은 출발선을 한 걸음 앞으로</p></details></article>
+
+      <article class="alt" id="a5"><div class="alt-head"><h3>추억의 뽑기</h3><span class="from">보물찾기 변형</span></div>
+        <p>개인. 운으로 정해져서 나이 차이가 상관없어요.</p>
+        <details><summary>규칙 보기</summary><ol><li>모은 랜덤선물에 번호를 붙여 펼쳐 놓아요.</li><li>한 명씩 뽑기판을 뜯어 번호를 확인해요.</li><li>같은 번호의 선물을 가져가요. 막내부터 뽑으면 서운한 아이가 줄어요.</li></ol><p class="need"><b>준비물</b> 뽑기판 (11칸 이상)</p></details></article>
+
+      <article class="alt" id="a6"><div class="alt-head"><h3>박 터트리기</h3><span class="from">신발 던지기 · 보물찾기 변형</span></div>
+        <p>전체 피날레. 간식이 와르르 쏟아지며 마무리돼요.</p>
+        <details><summary>규칙 보기</summary><ol><li>채반 두 개를 맞대 박을 만들고 개별포장 간식을 넣어요.</li><li>나무나 벤치에 끈으로 매달아요. 손으로 들고 있지 않아도 돼요.</li><li>"하나, 둘, 셋!"에 맞춰 모두 콩주머니를 던져요.</li><li>박이 열리면 다 같이 간식 줍기!</li></ol><p class="need"><b>준비물</b> 채반 2개, 끈, 테이프, 콩주머니, 개별포장 간식 (공용 간식을 일부 넣어도 좋아요)</p></details></article>
+
+      <article class="alt" id="a7"><div class="alt-head"><h3>몸으로 표현해요</h3><span class="from">OX 퀴즈 변형</span></div>
+        <p>팀전. 7살이 맞히면 2점 주는 동생 보너스가 있어요.</p>
+        <details><summary>규칙 · 나이별 제시어</summary><ol><li>대장이 스케치북에 제시어를 적어 표현할 친구에게만 보여줘요.</li><li>말 없이 몸으로만 표현하고, 같은 팀이 1분 안에 맞히면 1점.</li><li>모두 한 번씩 돌아가며 표현해요.</li></ol>
+          <p class="need"><b>쉬움 · 7살</b> 토끼, 코끼리, 펭귄, 꽃게, 개구리, 양치하기, 라면 먹기<br><b>보통 · 9살</b> 소방관, 요리사, 미용사, 축구, 피겨스케이팅, 볼링<br><b>어려움 · 10살</b> 엘리베이터에 갇힘, 아이스크림 떨어뜨림, 모기 잡기, 따릉이 타기, 오리배 타기</p>
+          <p class="need"><b>준비물</b> 스케치북, 굵은 매직</p></details></article>
+
+      <article class="alt" id="a8"><div class="alt-head"><h3>술래 놀이 3종</h3><span class="from">수건돌리기 변형</span></div>
+        <p>준비물 없이 아이들끼리 바로 하는 놀이예요.</p>
+        <details><summary>규칙 보기</summary><ol><li><b>무궁화꽃이 피었습니다</b> · 술래가 외치는 동안만 움직이고, 돌아봤을 때 움직이면 포로. "토끼가 뛰었습니다"처럼 동작을 붙이면 더 웃겨요.</li><li><b>얼음땡</b> · 잡힐 것 같으면 "얼음!", 친구가 "땡!" 해 줘야 다시 움직여요.</li><li><b>경찰과 도둑</b> · 경찰 4명, 도둑 7명. 잡힌 도둑은 감옥(돗자리 옆)으로, 친구가 터치하면 탈출!</li></ol><p class="need"><b>엄마</b> 뛰는 범위만 정해 주세요. 7살은 처음에 술래를 맡지 않게 해 주세요.</p></details></article>
+
+      <article class="alt" id="a9"><div class="alt-head"><h3>풍선 다 같이 지키기</h3><span class="from">과자따먹기 변형</span></div>
+        <p>모두 한 팀이 되는 협동 게임이에요.</p>
+        <details><summary>규칙 보기</summary><ol><li>풍선 1개를 위로 쳐 올려요.</li><li>땅에 떨어뜨리지 않고 몇 번 칠 수 있는지 다 같이 세요.</li><li>같은 사람이 연속으로 두 번 치면 안 돼요.</li></ol><p class="need"><b>준비물</b> 풍선 1~2개</p></details></article>
     </div>
   </section>
 
